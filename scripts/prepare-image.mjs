@@ -3,6 +3,9 @@
  * Prepare raw photos for the repo: apply EXIF orientation, strip ALL metadata (GPS, camera,
  * timestamps), cap the long edge, and write a clean JPEG/PNG with a kebab-case filename.
  *
+ * PNGs stay PNG only if they actually use transparency. Opaque PNGs (CAD and CFD screenshots)
+ * become high-quality JPEGs without chroma subsampling, so colored text and thin lines stay crisp.
+ *
  *   npm run image -- <input...> --out <directory> [--max 2400]
  *
  * HEIC/HEIF input is converted with macOS `sips` first (sharp's prebuilt binaries lack HEVC).
@@ -36,7 +39,7 @@ mkdirSync(outDir, { recursive: true });
 const toKebab = (name) =>
   name
     .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -61,7 +64,9 @@ try {
 
     const image = sharp(readable).rotate(); // bake in EXIF orientation before metadata is dropped
     const { hasAlpha } = await image.metadata();
-    const format = ext === '.png' && hasAlpha ? 'png' : 'jpeg';
+    const transparent = hasAlpha && !(await sharp(readable).stats()).isOpaque;
+    const format = ext === '.png' && transparent ? 'png' : 'jpeg';
+    const fromScreenshot = ext === '.png';
     const target = join(
       outDir,
       `${toKebab(basename(source, ext))}.${format === 'png' ? 'png' : 'jpg'}`,
@@ -75,7 +80,14 @@ try {
     const info =
       format === 'png'
         ? await pipeline.png({ compressionLevel: 9 }).toFile(target)
-        : await pipeline.jpeg({ quality: 88, mozjpeg: true }).toFile(target);
+        : await pipeline
+            .flatten({ background: '#ffffff' })
+            .jpeg({
+              quality: fromScreenshot ? 92 : 88,
+              mozjpeg: true,
+              chromaSubsampling: fromScreenshot ? '4:4:4' : '4:2:0',
+            })
+            .toFile(target);
 
     console.log(
       `✓ ${basename(source)} → ${target.replace(`${process.cwd()}/`, '')}  ` +
