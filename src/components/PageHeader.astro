@@ -1,0 +1,82 @@
+---
+import CarbonWeave from './backgrounds/CarbonWeave.astro';
+import MeshField from './backgrounds/MeshField.astro';
+
+/** Header for the project index pages; each page gets its own interactive background. */
+interface Props {
+  /** Small label above the title, e.g. "02 / Design & Simulation". */
+  kicker: string;
+  title: string;
+  lede: string;
+  background: 'mesh' | 'weave';
+  /** Annotation shown in the header corner, e.g. "O-grid · 112 × 26". */
+  annotation?: string;
+}
+
+const { kicker, title, lede, background, annotation } = Astro.props;
+---
+
+<header class="page-header">
+  {background === 'mesh' ? <MeshField /> : <CarbonWeave />}
+
+  <div class="container inner">
+    <p class="label kicker">{kicker}</p>
+    <h1>{title}</h1>
+    <p class="lede">{lede}</p>
+  </div>
+
+  {annotation && (
+    <div class="container annotation" aria-hidden="true">
+      <span class="label">{annotation}</span>
+    </div>
+  )}
+</header>
+
+<style>
+  .page-header {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: clamp(26rem, 62svh, 38rem);
+    padding-block: calc(var(--nav-height) + var(--space-xl)) var(--space-l);
+    border-bottom: 1px solid var(--c-line);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .inner {
+    align-self: end;
+    position: relative;
+    z-index: 1;
+  }
+
+  .kicker {
+    color: var(--c-accent);
+    margin-block-end: var(--space-s);
+  }
+
+  h1 {
+    max-width: 14ch;
+    font-size: var(--step-4);
+    font-stretch: var(--stretch-display);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .lede {
+    max-width: 48ch;
+    margin-block-start: var(--space-s);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--c-text-muted);
+  }
+
+  .annotation {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    padding-block-start: var(--space-m);
+  }
+</style>

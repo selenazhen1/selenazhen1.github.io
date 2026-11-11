@@ -1,0 +1,155 @@
+---
+import FlowField from './backgrounds/FlowField.astro';
+import Button from './ui/Button.astro';
+
+interface Action {
+  label: string;
+  href: string;
+  icon?: 'right' | 'down' | 'external';
+}
+
+interface Props {
+  primary: Action;
+  secondary?: Action;
+}
+
+const { primary, secondary } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-name">
+  <FlowField />
+
+  <div class="container inner">
+    <p class="label kicker reveal">Engineering Portfolio</p>
+    <h1 id="hero-name" class="name reveal">
+      <span>Selena</span>
+      <span>Zhen</span>
+    </h1>
+    <p class="tagline reveal">
+      Mechanical engineering student at UCLA focused on aerodynamics — from CFD to carbon fiber.
+    </p>
+    <div class="actions reveal">
+      <Button href={primary.href} icon={primary.icon}>
+        {primary.label}
+      </Button>
+      {secondary && (
+        <Button href={secondary.href} variant="ghost" icon={secondary.icon}>
+          {secondary.label}
+        </Button>
+      )}
+    </div>
+  </div>
+
+  <div class="container foot" aria-hidden="true">
+    <span class="label">
+      U<sub>∞</sub> &rarr;
+    </span>
+    <span class="label">Los Angeles, CA</span>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: min(100svh, 62rem);
+    padding-block: calc(var(--nav-height) + var(--space-xl)) var(--space-l);
+    isolation: isolate;
+  }
+
+  .inner {
+    align-self: center;
+    position: relative;
+  }
+
+  /* Soft scrim so the copy stays crisp over the streamlines. */
+  .inner::before {
+    content: '';
+    position: absolute;
+    inset: -12% -8% -12% -20%;
+    z-index: -1;
+    width: min(60rem, 100%);
+    background: radial-gradient(
+      ellipse at 30% 50%,
+      oklch(0.185 0.05 260 / 0.78),
+      oklch(0.185 0.05 260 / 0) 70%
+    );
+    pointer-events: none;
+  }
+
+  .kicker {
+    color: var(--c-accent);
+    margin-block-end: var(--space-s);
+  }
+
+  .name {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--step-hero);
+    font-weight: 720;
+    font-stretch: 125%;
+    line-height: 0.92;
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .name span:last-child {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--c-text);
+  }
+
+  .tagline {
+    max-width: 36ch;
+    margin-block-start: var(--space-m);
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: var(--c-text-muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-l);
+  }
+
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    padding-block-start: var(--space-l);
+  }
+
+  sub {
+    font-size: 0.75em;
+    vertical-align: -0.2em;
+    line-height: 0;
+  }
+
+  /* One orchestrated entrance: staggered rise. */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: rise var(--dur-slow) var(--ease-out-expo) both;
+    }
+
+    .reveal:nth-child(2) {
+      animation-delay: 80ms;
+    }
+
+    .reveal:nth-child(3) {
+      animation-delay: 200ms;
+    }
+
+    .reveal:nth-child(4) {
+      animation-delay: 300ms;
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+</style>

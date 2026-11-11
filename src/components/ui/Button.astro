@@ -1,0 +1,97 @@
+---
+interface Props {
+  href: string;
+  variant?: 'primary' | 'ghost';
+  /** Arrow glyph after the label; 'external' also opens in a new tab. */
+  icon?: 'right' | 'down' | 'external' | 'none';
+  download?: boolean | string;
+}
+
+const { href, variant = 'primary', icon = 'right', download } = Astro.props;
+const external = icon === 'external';
+---
+
+<a
+  class:list={['button', `button--${variant}`]}
+  href={href}
+  download={download}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener' : undefined}
+>
+  <span>
+    <slot />
+  </span>
+  {icon !== 'none' && (
+    <svg class:list={['icon', `icon--${icon}`]} viewBox="0 0 16 16" aria-hidden="true">
+      {icon === 'external' ? <path d="M5 11 11 5M6 5h5v5" /> : <path d="M3 8h10M9 4l4 4-4 4" />}
+    </svg>
+  )}
+  {external && <span class="visually-hidden"> (opens in a new tab)</span>}
+</a>
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    min-height: 2.875rem;
+    padding: 0 1.25rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-s);
+    font-size: var(--step--1);
+    font-weight: 560;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .button--primary {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .button--primary:hover {
+    background: var(--c-accent-hover);
+    color: var(--c-on-accent);
+  }
+
+  .button--ghost {
+    border-color: var(--c-line-strong);
+    color: var(--c-text);
+    background: oklch(0.185 0.05 260 / 0.5);
+  }
+
+  .button--ghost:hover {
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+  }
+
+  .icon {
+    width: 1em;
+    height: 1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: square;
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+
+  .icon--down {
+    rotate: 90deg;
+  }
+
+  .button:hover .icon--right {
+    transform: translateX(3px);
+  }
+
+  .button:hover .icon--down {
+    transform: translateX(3px);
+  }
+
+  .button:hover .icon--external {
+    transform: translate(2px, -2px);
+  }
+</style>

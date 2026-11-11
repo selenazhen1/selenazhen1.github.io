@@ -1,0 +1,66 @@
+---
+import type { ProjectStatus } from '../../lib/types';
+
+interface Props {
+  status: ProjectStatus;
+}
+
+const { status } = Astro.props;
+const label = status === 'complete' ? 'Complete' : 'In progress';
+---
+
+<span class:list={['status', `status--${status}`]}>
+  <span class="dot" aria-hidden="true"></span>
+  {label}
+</span>
+
+<style>
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .dot {
+    position: relative;
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .status--complete {
+    color: var(--c-accent);
+  }
+
+  .status--in-progress {
+    color: var(--c-warm);
+  }
+
+  /* A slow ping: the project is live, not finished. */
+  .status--in-progress .dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    animation: ping 2.4s var(--ease-out-quart) infinite;
+  }
+
+  @keyframes ping {
+    from {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    to {
+      transform: scale(2.8);
+      opacity: 0;
+    }
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+/** Headshot in a drawing-style frame: corner ticks offset outside the image, mono caption below. */
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+}
+
+const { src, alt, caption } = Astro.props;
+---
+
+<figure class="portrait">
+  <div class="frame">
+    <Image
+      src={src}
+      alt={alt}
+      widths={[400, 640, 900]}
+      sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 40vw, 80vw"
+      loading="lazy"
+    />
+    <span class="tick tick--tl" aria-hidden="true"></span>
+    <span class="tick tick--tr" aria-hidden="true"></span>
+    <span class="tick tick--bl" aria-hidden="true"></span>
+    <span class="tick tick--br" aria-hidden="true"></span>
+  </div>
+  {caption && <figcaption class="label">{caption}</figcaption>}
+</figure>
+
+<style>
+  .portrait {
+    display: grid;
+    gap: var(--space-s);
+  }
+
+  .frame {
+    position: relative;
+    padding: 10px;
+  }
+
+  img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+
+  .tick {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 0 solid var(--c-accent);
+  }
+
+  .tick--tl {
+    top: 0;
+    left: 0;
+    border-width: 1px 0 0 1px;
+  }
+
+  .tick--tr {
+    top: 0;
+    right: 0;
+    border-width: 1px 1px 0 0;
+  }
+
+  .tick--bl {
+    bottom: 0;
+    left: 0;
+    border-width: 0 0 1px 1px;
+  }
+
+  .tick--br {
+    bottom: 0;
+    right: 0;
+    border-width: 0 1px 1px 0;
+  }
+
+  figcaption {
+    padding-inline: 10px;
+  }
+</style>

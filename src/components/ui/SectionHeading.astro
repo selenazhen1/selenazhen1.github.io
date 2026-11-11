@@ -1,0 +1,51 @@
+---
+import DimensionLine from './DimensionLine.astro';
+
+interface Props {
+  /** Two-digit section number, e.g. "01". */
+  index: string;
+  title: string;
+  /** Optional annotation on the dimension line, e.g. "4 entries". */
+  note?: string;
+  id?: string;
+}
+
+const { index, title, note, id } = Astro.props;
+---
+
+<header class="section-heading">
+  <span class="label index">§ {index}</span>
+  <h2 id={id}>{title}</h2>
+  <DimensionLine label={note} />
+</header>
+
+<style>
+  .section-heading {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    column-gap: var(--space-s);
+    margin-block-end: var(--space-l);
+  }
+
+  .index {
+    color: var(--c-accent);
+  }
+
+  h2 {
+    font-size: var(--step-3);
+    line-height: var(--leading-tight);
+  }
+
+  @media (max-width: 30rem) {
+    .section-heading {
+      grid-template-columns: auto 1fr;
+      row-gap: var(--space-2xs);
+    }
+
+    h2 {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>
