@@ -71,18 +71,18 @@ const fail = (message) => failures.push(message);
 const warn = (message) => warnings.push(message);
 const rel = (path) => relative(ROOT, path);
 
-function step(title, fn) {
+/** Runs one check, prints its findings, and resolves true if it added no failures. */
+async function step(title, fn) {
   const before = failures.length;
   const beforeWarn = warnings.length;
   process.stdout.write(`\n▸ ${title}\n`);
-  return Promise.resolve(fn()).then(() => {
-    const newFailures = failures.slice(before);
-    const newWarnings = warnings.slice(beforeWarn);
-    newFailures.forEach((message) => console.log(`  ✗ ${message}`));
-    newWarnings.forEach((message) => console.log(`  ! ${message}`));
-    if (newFailures.length === 0) console.log('  ✓ passed');
-    return newFailures.length === 0;
-  });
+  await fn();
+  const newFailures = failures.slice(before);
+  const newWarnings = warnings.slice(beforeWarn);
+  newFailures.forEach((message) => console.log(`  ✗ ${message}`));
+  newWarnings.forEach((message) => console.log(`  ! ${message}`));
+  if (newFailures.length === 0) console.log('  ✓ passed');
+  return newFailures.length === 0;
 }
 
 function run(command, args) {

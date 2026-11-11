@@ -31,17 +31,27 @@ Run `npm run verify`. It must pass. It checks:
 
 ```
 src/
-  assets/images/        Cleaned images (always via `npm run image`)
-  assets/placeholders/  Stand-in graphics — delete before launch
-  components/           Page sections and UI pieces
-    backgrounds/        Interactive canvas backgrounds (flow field, CFD mesh, carbon weave)
-    ui/                 Small primitives (buttons, tags, status, dimension lines)
-  layouts/              Base HTML shell (fonts, meta, client router)
-  pages/                Routes — `preview.astro` is the internal style reference
-  scripts/              Client-side TypeScript (background renderers, lifecycle helpers)
-  styles/               Design tokens and global styles
-scripts/                Node tooling: `verify.mjs`, `prepare-image.mjs`
+  content/projects/<slug>/  One folder per project: index.md + its images
+  content.config.ts         Project schema (validated at build time)
+  data/                     Site facts, nav, page copy (site.ts) and résumé timeline/skills (resume.ts)
+  assets/images/            Cleaned site images (always via `npm run image`)
+  assets/placeholders/      Stand-in graphics — delete before launch
+  components/               Page sections and UI pieces
+    home/                   Home page sections
+    backgrounds/            Interactive canvas backgrounds (flow field, CFD mesh, carbon weave)
+    ui/                     Small primitives (buttons, tags, status, dimension lines)
+  layouts/                  Base HTML shell (fonts, meta, nav, footer, client router)
+  lib/                      Project queries and shared types
+  pages/                    Routes: home, /design/, /fabrication/, case studies, 404, /preview/
+  scripts/                  Client-side TypeScript (background renderers, lifecycle helpers)
+  styles/                   Design tokens and global styles
+public/                     Résumé PDF, favicon, social preview image, robots.txt
+scripts/                    Node tooling: `verify.mjs`, `prepare-image.mjs`
 ```
+
+## Adding a project
+
+See [CONTENT_GUIDE.md](CONTENT_GUIDE.md).
 
 ## Design system
 
