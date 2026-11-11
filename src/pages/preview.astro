@@ -1,21 +1,15 @@
 ---
 /**
- * Style preview — a living reference of the design system, built from the real components.
- * Not part of the public site: it is noindexed and must be deleted before launch
+ * Style preview — the design system reference (tokens, type, primitives).
+ * Internal only: noindexed, excluded from the sitemap, and must be deleted before launch
  * (`npm run verify:launch` fails while this file exists).
  */
-import Hero from '../components/Hero.astro';
-import PageHeader from '../components/PageHeader.astro';
-import Portrait from '../components/Portrait.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import Button from '../components/ui/Button.astro';
 import DimensionLine from '../components/ui/DimensionLine.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
 import StatusBadge from '../components/ui/StatusBadge.astro';
 import Tag from '../components/ui/Tag.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import placeholderCover from '../assets/placeholders/cover.svg';
-import headshot from '../assets/images/headshot.jpg';
 
 const swatches = [
   { name: 'Deep', token: '--c-deep', note: 'Wells, image backdrops' },
@@ -35,210 +29,141 @@ const tools = ['SolidWorks', 'STAR-CCM+', 'SolidWorks Simulation', 'Composite la
 <BaseLayout title="Style preview" noindex>
   <div class="preview-banner label">Style preview · not part of the published site</div>
 
-  <Hero
-    primary={{ label: 'View work', href: '#cards', icon: 'down' }}
-    secondary={{ label: 'Resume', href: '#components', icon: 'right' }}
-  />
+  <header class="container intro">
+    <p class="label">Internal</p>
+    <h1>Design system</h1>
+    <p class="lede">
+      Tokens and primitives used across the site. Live pages show the composed sections: the home
+      hero, the Design &amp; Simulation and Fabrication headers, cards, and case studies.
+    </p>
+  </header>
 
-  <main>
-    <section class="container block" aria-labelledby="palette">
-      <SectionHeading index="01" title="Palette" id="palette" note="OKLCH · dark only" />
-      <ul class="swatches" role="list">
-        {swatches.map((swatch) => (
-          <li class="swatch">
-            <span class="chip" style={`background: var(${swatch.token})`} />
-            <span class="swatch-name">{swatch.name}</span>
-            <code class="label">{swatch.token}</code>
-            <span class="swatch-note">{swatch.note}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section class="container block" aria-labelledby="type">
-      <SectionHeading index="02" title="Typography" id="type" note="Archivo · IBM Plex Mono" />
-      <div class="type-grid">
-        <div class="type-row">
-          <span class="label">Display · Archivo 125% wide</span>
-          <p class="specimen-display">Rear Wing</p>
-        </div>
-        <div class="type-row">
-          <span class="label">Heading 1 · 118% wide</span>
-          <p class="specimen-h1">Design &amp; Simulation</p>
-        </div>
-        <div class="type-row">
-          <span class="label">Heading 2 · 108% wide</span>
-          <p class="specimen-h2">Five rear-wing concepts in STAR-CCM+</p>
-        </div>
-        <div class="type-row">
-          <span class="label">Heading 3</span>
-          <p class="specimen-h3">Mounting height and driver-head interference</p>
-        </div>
-        <div class="type-row">
-          <span class="label">Body · Archivo 100%</span>
-          <p class="specimen-body">
-            Designed and evaluated five rear-wing concepts — beam wings, endplate louvers, and
-            endplate strakes — comparing lift and drag coefficients and the airflow behavior behind
-            each. CFD showed the air disturbed by the driver's head was reaching the wing, so the
-            mount was raised two inches.
-          </p>
-        </div>
-        <div class="type-row">
-          <span class="label">Data label · Plex Mono</span>
-          <p class="label specimen-label">Sep 2025 – Present / Bruin Formula Racing / Fig. 03</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="container block" aria-labelledby="components">
-      <SectionHeading index="03" title="Components" id="components" />
-      <div class="component-grid">
-        <div class="component">
-          <span class="label">Buttons</span>
-          <div class="row">
-            <Button href="#components">View work</Button>
-            <Button href="#components" variant="ghost">
-              Download resume
-            </Button>
-            <Button href="#components" variant="ghost" icon="external">
-              LinkedIn
-            </Button>
-          </div>
-        </div>
-        <div class="component">
-          <span class="label">Tool tags</span>
-          <div class="row">
-            {tools.map((tool) => (
-              <Tag>{tool}</Tag>
-            ))}
-          </div>
-        </div>
-        <div class="component">
-          <span class="label">Status</span>
-          <div class="row">
-            <StatusBadge status="complete" />
-            <StatusBadge status="in-progress" />
-          </div>
-        </div>
-        <div class="component">
-          <span class="label">Dimension line</span>
-          <DimensionLine label="+2 in mount height" />
-        </div>
-      </div>
-    </section>
-
-    <section class="container block" aria-labelledby="cards">
-      <SectionHeading index="04" title="Project cards" id="cards" note="Placeholder content" />
-      <div class="cards">
-        <ProjectCard
-          layout="wide"
-          href="#cards"
-          title="Rear Wing Aero Concepts"
-          summary="Five rear-wing concepts compared in CFD to balance downforce against drag, and a revised mounting height clear of the driver's wake."
-          organization="Bruin Formula Racing"
-          dates="Sep 2025 – Present"
-          role="Responsible Engineer, Rear Wing"
-          tools={['SolidWorks', 'STAR-CCM+']}
-          status="complete"
-          cover={placeholderCover}
-          coverAlt="Placeholder image"
-          figure="01"
-        />
-        <ProjectCard
-          href="#cards"
-          title="Combat Robot Weapon"
-          summary="A rotating weapon targeting 250 mph blade-tip speed inside a 3 lb robot."
-          organization="UCLA ASME"
-          dates="Oct 2026 – Present"
-          role="Weapon & chassis design"
-          tools={['SolidWorks', 'SolidWorks Simulation']}
-          status="in-progress"
-          cover={placeholderCover}
-          coverAlt="Placeholder image"
-          figure="02"
-        />
-        <ProjectCard
-          href="#cards"
-          title="Composite Aero Components"
-          summary="Carbon-fiber and fiberglass aero parts: mold prep, layup, and surface finishing."
-          organization="Bruin Formula Racing"
-          dates="2025 – 2026"
-          role="Composites"
-          tools={['Carbon fiber', 'Fiberglass', 'Mold prep']}
-          status="complete"
-          cover={placeholderCover}
-          coverAlt="Placeholder image"
-          figure="03"
-        />
-      </div>
-    </section>
-
-    <section class="container block" aria-labelledby="about">
-      <SectionHeading index="05" title="About (draft)" id="about" />
-      <div class="about">
-        <Portrait src={headshot} alt="Portrait of Selena Zhen" caption="S. Zhen · UCLA" />
-        <div class="about-copy">
-          <p class="about-lead">
-            I'm a mechanical engineering student at UCLA, drawn to aerodynamics and to the moment a
-            simulation result turns into a physical part.
-          </p>
-          <p>
-            On Bruin Formula Racing I'm the responsible engineer for the rear wing — designing
-            concepts in SolidWorks, testing them in STAR-CCM+, and laying up the carbon-fiber parts
-            that end up on the car. I'm also designing the weapon and chassis for a 3 lb combat
-            robot with UCLA ASME.
-          </p>
-          <p>
-            I like problems where the numbers and the hands-on work have to agree with each other.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <section aria-label="Design and Simulation page header preview">
-    <div class="container header-caption">
-      <SectionHeading index="06" title="Page header · Design & Simulation" note="Hover the mesh" />
-    </div>
-    <PageHeader
-      kicker="02 / Design & Simulation"
-      title="Design & Simulation"
-      lede="CAD models, CFD studies, and structural analysis — how each design was explored, tested, and refined."
-      background="mesh"
-      annotation="O-grid · 112 × 26 · NACA 6412 inv."
-    />
+  <section class="container block" aria-labelledby="palette">
+    <SectionHeading index="01" title="Palette" id="palette" note="OKLCH · dark only" />
+    <ul class="swatches" role="list">
+      {swatches.map((swatch) => (
+        <li class="swatch">
+          <span class="chip" style={`background: var(${swatch.token})`} />
+          <span class="swatch-name">{swatch.name}</span>
+          <code class="label">{swatch.token}</code>
+          <span class="swatch-note">{swatch.note}</span>
+        </li>
+      ))}
+    </ul>
   </section>
 
-  <section aria-label="Fabrication page header preview">
-    <div class="container header-caption">
-      <SectionHeading index="07" title="Page header · Fabrication" note="Move across the weave" />
+  <section class="container block" aria-labelledby="type">
+    <SectionHeading index="02" title="Typography" id="type" note="Archivo · IBM Plex Mono" />
+    <div class="type-grid">
+      <div class="type-row">
+        <span class="label">Display · Archivo 125% wide</span>
+        <p class="specimen-display">Rear Wing</p>
+      </div>
+      <div class="type-row">
+        <span class="label">Heading 1 · 118% wide</span>
+        <p class="specimen-h1">Design &amp; Simulation</p>
+      </div>
+      <div class="type-row">
+        <span class="label">Heading 2 · 108% wide</span>
+        <p class="specimen-h2">Five rear-wing concepts in STAR-CCM+</p>
+      </div>
+      <div class="type-row">
+        <span class="label">Heading 3</span>
+        <p class="specimen-h3">Mounting height and driver-head interference</p>
+      </div>
+      <div class="type-row">
+        <span class="label">Body · Archivo 100%</span>
+        <p class="specimen-body">
+          Designed and evaluated five rear-wing concepts — beam wings, endplate louvers, and
+          endplate strakes — comparing lift and drag coefficients and the airflow behavior behind
+          each. CFD showed the air disturbed by the driver's head was reaching the wing, so the
+          mount was raised two inches.
+        </p>
+      </div>
+      <div class="type-row">
+        <span class="label">Data label · Plex Mono</span>
+        <p class="label specimen-label">Sep 2025 – Present / Bruin Formula Racing / Fig. 03</p>
+      </div>
     </div>
-    <PageHeader
-      kicker="03 / Fabrication"
-      title="Fabrication"
-      lede="Hands-on work — composite layups, mold preparation, and finishing parts that leave the shop and go on the car."
-      background="weave"
-      annotation="2×2 twill · carbon"
-    />
   </section>
 
-  <div class="container end-spacer"></div>
+  <section class="container block" aria-labelledby="components">
+    <SectionHeading index="03" title="Components" id="components" />
+    <div class="component-grid">
+      <div class="component">
+        <span class="label">Buttons</span>
+        <div class="row">
+          <Button href="#components">View work</Button>
+          <Button href="#components" variant="ghost" icon="down">
+            Download resume
+          </Button>
+          <Button href="#components" variant="ghost" icon="external">
+            LinkedIn
+          </Button>
+        </div>
+      </div>
+      <div class="component">
+        <span class="label">Tool tags</span>
+        <div class="row">
+          {tools.map((tool) => (
+            <Tag>{tool}</Tag>
+          ))}
+        </div>
+      </div>
+      <div class="component">
+        <span class="label">Status</span>
+        <div class="row">
+          <StatusBadge status="complete" />
+          <StatusBadge status="in-progress" />
+        </div>
+      </div>
+      <div class="component">
+        <span class="label">Dimension line</span>
+        <DimensionLine label="+2 in mount height" />
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
   .preview-banner {
     position: fixed;
-    top: var(--space-s);
+    bottom: var(--space-s);
     left: 50%;
     z-index: 10;
     translate: -50% 0;
+    width: max-content;
+    max-width: calc(100% - 2 * var(--gutter));
     padding: 0.5em 1em;
     border: 1px solid var(--c-warm);
     background: oklch(0.155 0.045 262 / 0.9);
     color: var(--c-warm);
-    width: max-content;
-    max-width: calc(100% - 2 * var(--gutter));
     text-align: center;
+  }
+
+  .intro {
+    display: grid;
+    gap: var(--space-s);
+    padding-block: calc(var(--nav-height) + var(--space-xl)) var(--space-l);
+  }
+
+  .intro .label {
+    color: var(--c-warm);
+  }
+
+  h1 {
+    font-size: var(--step-4);
+    font-weight: 700;
+    font-stretch: var(--stretch-display);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .lede {
+    max-width: 52ch;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--c-text-muted);
   }
 
   .block {
@@ -355,63 +280,5 @@ const tools = ['SolidWorks', 'STAR-CCM+', 'SolidWorks Simulation', 'Composite la
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-xs);
-  }
-
-  /* Cards: one featured wide card, then a pair. */
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-l);
-  }
-
-  .cards > :global(:first-child) {
-    grid-column: 1 / -1;
-  }
-
-  @media (max-width: 48rem) {
-    .cards {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* About */
-  .about {
-    display: grid;
-    grid-template-columns: minmax(14rem, 22rem) minmax(0, 1fr);
-    gap: var(--space-xl);
-    align-items: start;
-  }
-
-  @media (max-width: 48rem) {
-    .about {
-      grid-template-columns: 1fr;
-    }
-
-    .about :global(.portrait) {
-      max-width: 22rem;
-    }
-  }
-
-  .about-copy {
-    display: grid;
-    gap: var(--space-s);
-    max-width: var(--prose-max);
-    color: var(--c-text-muted);
-  }
-
-  .about-lead {
-    font-size: var(--step-2);
-    font-stretch: var(--stretch-heading);
-    font-weight: 500;
-    line-height: 1.3;
-    color: var(--c-text);
-  }
-
-  .header-caption {
-    padding-block-start: var(--space-2xl);
-  }
-
-  .end-spacer {
-    height: var(--space-3xl);
   }
 </style>

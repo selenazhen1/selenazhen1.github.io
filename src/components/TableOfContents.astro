@@ -1,0 +1,106 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { figureNumber } from '../lib/projects';
+
+/** Sticky section index for a write-up; highlights the section currently in view. */
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const sections = Astro.props.headings.filter((heading) => heading.depth === 2);
+---
+
+{sections.length > 1 && (
+  <nav class="toc" aria-label="Sections" data-toc>
+    <p class="label">Contents</p>
+    <ol role="list">
+      {sections.map((heading, index) => (
+        <li>
+          <a href={`#${heading.slug}`}>
+            <span class="number">§ {figureNumber(index + 1)}</span>
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<script>
+  import { onPage } from '../scripts/lifecycle';
+
+  onPage(() => {
+    const toc = document.querySelector<HTMLElement>('[data-toc]');
+    if (!toc) return;
+
+    const links = new Map(
+      Array.from(toc.querySelectorAll<HTMLAnchorElement>('a'), (link) => [
+        decodeURIComponent(link.hash.slice(1)),
+        link,
+      ]),
+    );
+    const headings = Array.from(links.keys())
+      .map((id) => document.getElementById(id))
+      .filter((heading): heading is HTMLElement => heading !== null);
+
+    const setActive = (id: string) => {
+      links.forEach((link, key) => link.toggleAttribute('data-active', key === id));
+    };
+
+    // The active section is the last heading that has scrolled past the upper third.
+    const observer = new IntersectionObserver(
+      () => {
+        const passed = headings.filter(
+          (h) => h.getBoundingClientRect().top < window.innerHeight * 0.35,
+        );
+        setActive((passed.at(-1) ?? headings[0])?.id ?? '');
+      },
+      { rootMargin: '0px 0px -60% 0px', threshold: [0, 1] },
+    );
+    headings.forEach((heading) => observer.observe(heading));
+
+    return () => observer.disconnect();
+  });
+</script>
+
+<style>
+  .toc {
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-m));
+  }
+
+  ol {
+    display: grid;
+    gap: var(--space-3xs);
+    margin: var(--space-xs) 0 0;
+    border-left: 1px solid var(--c-line);
+  }
+
+  a {
+    display: grid;
+    gap: 0.1rem;
+    margin-left: -1px;
+    padding: var(--space-3xs) 0 var(--space-3xs) var(--space-s);
+    border-left: 1px solid transparent;
+    font-size: var(--step--1);
+    line-height: 1.35;
+    color: var(--c-text-faint);
+    text-decoration: none;
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  a:hover,
+  a[data-active] {
+    color: var(--c-text);
+    border-left-color: var(--c-accent);
+  }
+
+  .number {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: var(--tracking-label);
+    color: var(--c-accent);
+  }
+</style>

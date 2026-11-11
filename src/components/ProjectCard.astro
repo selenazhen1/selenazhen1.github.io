@@ -1,7 +1,6 @@
 ---
-import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
-import type { ProjectStatus } from '../lib/types';
+import { projectHref, type Project } from '../lib/projects';
 import StatusBadge from './ui/StatusBadge.astro';
 
 /**
@@ -9,35 +8,18 @@ import StatusBadge from './ui/StatusBadge.astro';
  * and a title block underneath listing role, tools, and status.
  */
 interface Props {
-  href: string;
-  title: string;
-  summary: string;
-  organization: string;
-  dates: string;
-  role: string;
-  tools: string[];
-  status: ProjectStatus;
-  cover: ImageMetadata;
-  coverAlt: string;
+  project: Project;
   /** Figure number shown in the image corner, e.g. "01". */
   figure: string;
   layout?: 'standard' | 'wide';
+  /** Heading level for the title, so cards nest correctly under the page outline. */
+  headingLevel?: 'h2' | 'h3';
 }
 
-const {
-  href,
-  title,
-  summary,
-  organization,
-  dates,
-  role,
-  tools,
-  status,
-  cover,
-  coverAlt,
-  figure,
-  layout = 'standard',
-} = Astro.props;
+const { project, figure, layout = 'standard', headingLevel: Heading = 'h3' } = Astro.props;
+const { title, summary, organization, dates, role, tools, status, cover, coverAlt, placeholder } =
+  project.data;
+const href = projectHref(project);
 
 const sizes =
   layout === 'wide'
@@ -49,6 +31,7 @@ const sizes =
   <div class="media">
     <Image src={cover} alt={coverAlt} widths={[480, 800, 1200, 1600]} sizes={sizes} />
     <span class="label figure">Fig. {figure}</span>
+    {placeholder && <span class="label placeholder-flag">Placeholder</span>}
   </div>
 
   <div class="body">
@@ -57,9 +40,9 @@ const sizes =
       <span aria-hidden="true">/</span>
       <span>{dates}</span>
     </p>
-    <h3>
+    <Heading class="title">
       <a href={href}>{title}</a>
-    </h3>
+    </Heading>
     <p class="summary">{summary}</p>
 
     <dl class="title-block">
@@ -99,27 +82,27 @@ const sizes =
   }
 
   /* The whole card is one link target (stretched from the title link). */
-  h3 a {
+  .title a {
     text-decoration: none;
   }
 
-  h3 a::after {
+  .title a::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 1;
   }
 
-  .card:hover h3 a {
+  .card:hover .title a {
     color: var(--c-accent);
   }
 
-  .card:has(h3 a:focus-visible) {
+  .card:has(.title a:focus-visible) {
     outline: 2px solid var(--c-accent);
     outline-offset: 3px;
   }
 
-  h3 a:focus-visible {
+  .title a:focus-visible {
     outline: none;
   }
 
@@ -152,6 +135,16 @@ const sizes =
     color: var(--c-text-muted);
   }
 
+  .placeholder-flag {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    padding: 0.25em 0.6em;
+    border: 1px solid var(--c-warm);
+    background: oklch(0.155 0.045 262 / 0.85);
+    color: var(--c-warm);
+  }
+
   /* ── Body & title block ──────────────────────────── */
   .body {
     display: flex;
@@ -166,7 +159,7 @@ const sizes =
     gap: 0.6em;
   }
 
-  h3 {
+  .title {
     font-size: var(--step-2);
     line-height: var(--leading-snug);
     transition: color var(--dur-fast) var(--ease-out-quart);

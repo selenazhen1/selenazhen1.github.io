@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500">
+  <!-- Placeholder detail image (portrait). Replace with real project images. -->
+  <defs>
+    <pattern id="minor" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#2a4466" stroke-opacity="0.35" stroke-width="1" />
+    </pattern>
+    <pattern id="major" width="200" height="200" patternUnits="userSpaceOnUse">
+      <rect width="200" height="200" fill="url(#minor)" />
+      <path d="M200 0H0V200" fill="none" stroke="#2a4466" stroke-opacity="0.7" stroke-width="1" />
+    </pattern>
+  </defs>
+  <rect width="1200" height="1500" fill="#0a1a34" />
+  <rect width="1200" height="1500" fill="url(#major)" />
+  <g fill="none" stroke="#83d9f2" stroke-opacity="0.28" stroke-width="2">
+    <rect x="80" y="80" width="1040" height="1340" />
+    <path d="M80 80 1120 1420M1120 80 80 1420" />
+  </g>
+  <circle cx="600" cy="750" r="120" fill="#0a1a34" stroke="#83d9f2" stroke-opacity="0.5" stroke-width="2" />
+  <text
+    x="600"
+    y="762"
+    fill="#83d9f2"
+    fill-opacity="0.8"
+    font-family="IBM Plex Mono, Menlo, monospace"
+    font-size="34"
+    letter-spacing="6"
+    text-anchor="middle"
+  >
+    IMAGE
+  </text>
+</svg>

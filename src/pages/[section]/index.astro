@@ -1,0 +1,67 @@
+---
+import type { GetStaticPaths } from 'astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import Button from '../../components/ui/Button.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import { SECTION_IDS, SECTIONS, type SectionId } from '../../data/site';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjects } from '../../lib/projects';
+
+export const getStaticPaths = (() =>
+  SECTION_IDS.map((section) => ({ params: { section } }))) satisfies GetStaticPaths;
+
+const sectionId = Astro.params.section as SectionId;
+const section = SECTIONS[sectionId];
+const projects = await getProjects(sectionId);
+
+const otherId = SECTION_IDS.find((id) => id !== sectionId)!;
+const other = SECTIONS[otherId];
+const count = `${projects.length} project${projects.length === 1 ? '' : 's'}`;
+---
+
+<BaseLayout title={section.title} description={section.lede}>
+  <PageHeader
+    kicker={section.kicker}
+    title={section.title}
+    lede={section.lede}
+    background={section.background}
+    annotation={section.annotation}
+  />
+
+  <section class="container listing" aria-labelledby="projects">
+    <SectionHeading index="01" title="Projects" id="projects" note={count} />
+
+    {projects.length > 0 ? (
+      <ProjectGrid projects={projects} />
+    ) : (
+      <p class="empty">Projects for this page are being written up — check back soon.</p>
+    )}
+  </section>
+
+  <aside class="container cross-link">
+    <p class="label">Also see</p>
+    <Button href={`/${otherId}/`} variant="ghost">
+      {other.title}
+    </Button>
+  </aside>
+</BaseLayout>
+
+<style>
+  .listing {
+    padding-top: var(--space-2xl);
+  }
+
+  .empty {
+    padding: var(--space-xl);
+    border: 1px dashed var(--c-line-strong);
+    color: var(--c-text-muted);
+  }
+
+  .cross-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    margin-top: var(--space-2xl);
+  }
+</style>

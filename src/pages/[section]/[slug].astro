@@ -1,0 +1,336 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage, Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Gallery from '../../components/Gallery.astro';
+import Prose from '../../components/Prose.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import StatusBadge from '../../components/ui/StatusBadge.astro';
+import Tag from '../../components/ui/Tag.astro';
+import { SECTIONS, type SectionId } from '../../data/site';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { figureNumber, getProjects, projectHref, type Project } from '../../lib/projects';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { section: project.data.section, slug: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const data = project.data;
+const sectionId = data.section as SectionId;
+const section = SECTIONS[sectionId];
+const { Content, headings } = await render(project);
+
+// Neighbours within the same section, for the pager at the bottom.
+const siblings = await getProjects(sectionId);
+const position = siblings.findIndex((entry) => entry.id === project.id);
+const previous = position > 0 ? siblings[position - 1] : undefined;
+const next = position < siblings.length - 1 ? siblings[position + 1] : undefined;
+
+// Use the cover as the social preview image (1200 wide, JPEG for broad compatibility).
+const ogImage =
+  data.cover.format === 'svg'
+    ? undefined
+    : (await getImage({ src: data.cover, width: 1200, format: 'jpg' })).src;
+---
+
+<BaseLayout title={data.title} description={data.summary} image={ogImage}>
+  <article class="case">
+    <header class="container case-header">
+      <a class="back label" href={`/${sectionId}/`}>
+        ← {section.title}
+      </a>
+      {data.placeholder && <p class="label placeholder-flag">Placeholder content</p>}
+      <p class="label meta">
+        <span>{data.organization}</span>
+        <span aria-hidden="true">/</span>
+        <span>{data.dates}</span>
+      </p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.summary}</p>
+    </header>
+
+    <div class="container">
+      <dl class="spec">
+        <div>
+          <dt class="label">Organization</dt>
+          <dd>{data.organization}</dd>
+        </div>
+        <div>
+          <dt class="label">Role</dt>
+          <dd>{data.role}</dd>
+        </div>
+        <div>
+          <dt class="label">Timeline</dt>
+          <dd>{data.dates}</dd>
+        </div>
+        <div>
+          <dt class="label">Status</dt>
+          <dd>
+            <StatusBadge status={data.status} />
+          </dd>
+        </div>
+        <div class="spec-tools">
+          <dt class="label">Tools</dt>
+          <dd class="tools">
+            {data.tools.map((tool) => (
+              <Tag>{tool}</Tag>
+            ))}
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <figure class="container cover">
+      <Image
+        src={data.cover}
+        alt={data.coverAlt}
+        widths={[640, 1024, 1440, 2000]}
+        sizes="(min-width: 78rem) 74rem, 92vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <figcaption>
+        <span class="label">Fig. 01</span>
+        {data.coverCaption && <span class="caption">{data.coverCaption}</span>}
+      </figcaption>
+    </figure>
+
+    <div class="container body">
+      <aside class="toc-column">
+        <TableOfContents headings={headings} />
+      </aside>
+      <Prose>
+        <Content />
+      </Prose>
+    </div>
+
+    {data.gallery.length > 0 && (
+      <section class="container gallery-section" aria-labelledby="gallery">
+        <SectionHeading
+          index={figureNumber(headings.filter((heading) => heading.depth === 2).length + 1)}
+          title="Gallery"
+          id="gallery"
+          note={`${data.gallery.length} figure${data.gallery.length === 1 ? '' : 's'}`}
+        />
+        <Gallery items={data.gallery} firstFigure={2} />
+      </section>
+    )}
+
+    {(previous || next) && (
+      <nav class="container pager" aria-label={`More ${section.title} projects`}>
+        {previous ? (
+          <a class="pager-link" href={projectHref(previous)} rel="prev">
+            <span class="label">← Previous</span>
+            <span class="pager-title">{previous.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {next && (
+          <a class="pager-link pager-link--next" href={projectHref(next)} rel="next">
+            <span class="label">Next →</span>
+            <span class="pager-title">{next.data.title}</span>
+          </a>
+        )}
+      </nav>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .case-header {
+    display: grid;
+    gap: var(--space-s);
+    padding-block: calc(var(--nav-height) + var(--space-xl)) var(--space-l);
+  }
+
+  .back {
+    justify-self: start;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--c-accent);
+  }
+
+  .placeholder-flag {
+    justify-self: start;
+    padding: 0.25em 0.6em;
+    border: 1px solid var(--c-warm);
+    color: var(--c-warm);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin-top: var(--space-s);
+    color: var(--c-accent);
+  }
+
+  h1 {
+    max-width: 18ch;
+    font-size: var(--step-4);
+    font-weight: 700;
+    font-stretch: var(--stretch-display);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .lede {
+    max-width: 52ch;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--c-text-muted);
+  }
+
+  /* Title-block spec strip. */
+  .spec {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid var(--c-line);
+    background: oklch(0.2 0.052 260 / 0.6);
+  }
+
+  .spec > div {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3xs);
+    padding: var(--space-s) var(--space-m);
+  }
+
+  .spec > div + div {
+    border-left: 1px solid var(--c-line);
+  }
+
+  .spec-tools {
+    grid-column: 1 / -1;
+    border-left: 0 !important;
+    border-top: 1px solid var(--c-line);
+  }
+
+  dd {
+    font-size: var(--step--1);
+  }
+
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs) var(--space-2xs);
+    margin-top: var(--space-3xs);
+  }
+
+  @media (max-width: 48rem) {
+    .spec {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .spec > div:nth-child(3) {
+      border-left: 0;
+    }
+
+    .spec > div:nth-child(n + 3) {
+      border-top: 1px solid var(--c-line);
+    }
+  }
+
+  .cover {
+    margin-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .cover img {
+    width: 100%;
+    max-height: 80svh;
+    object-fit: cover;
+    border: 1px solid var(--c-line);
+  }
+
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem var(--space-xs);
+    margin-top: var(--space-2xs);
+  }
+
+  figcaption .label {
+    color: var(--c-accent);
+  }
+
+  .caption {
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  /* Stretch so the sticky contents list has room to stay pinned while the prose scrolls. */
+  .toc-column {
+    align-self: stretch;
+  }
+
+  @media (max-width: 56rem) {
+    .body {
+      grid-template-columns: 1fr;
+    }
+
+    .toc-column {
+      display: none;
+    }
+  }
+
+  .gallery-section {
+    padding-top: var(--space-2xl);
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .pager-link {
+    display: grid;
+    gap: var(--space-2xs);
+    padding: var(--space-m);
+    border: 1px solid var(--c-line);
+    text-decoration: none;
+    transition: border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .pager-link:hover {
+    border-color: var(--c-accent);
+    color: inherit;
+  }
+
+  .pager-link--next {
+    text-align: right;
+  }
+
+  .pager-title {
+    font-size: var(--step-1);
+    font-weight: 620;
+    font-stretch: var(--stretch-heading);
+  }
+
+  .pager-link:hover .pager-title {
+    color: var(--c-accent);
+  }
+</style>

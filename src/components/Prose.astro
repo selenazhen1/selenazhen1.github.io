@@ -1,0 +1,125 @@
+---
+/** Typography for rendered Markdown (project write-ups). Section headings are auto-numbered. */
+---
+
+<div class="prose">
+  <slot />
+</div>
+
+<style>
+  .prose {
+    counter-reset: section;
+    max-width: var(--prose-max);
+    color: var(--c-text-muted);
+  }
+
+  .prose > :global(* + *) {
+    margin-top: var(--space-s);
+  }
+
+  .prose :global(h2) {
+    counter-increment: section;
+    margin-top: var(--space-xl);
+    margin-bottom: calc(var(--space-2xs) - var(--space-s));
+    padding-top: var(--space-s);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--step-2);
+    color: var(--c-text);
+  }
+
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(h2)::before {
+    content: '§ ' counter(section, decimal-leading-zero);
+    display: block;
+    margin-bottom: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    color: var(--c-accent);
+  }
+
+  .prose :global(h3) {
+    margin-top: var(--space-l);
+    font-size: var(--step-1);
+    color: var(--c-text);
+  }
+
+  .prose :global(strong) {
+    font-weight: 620;
+    color: var(--c-text);
+  }
+
+  .prose :global(a) {
+    color: var(--c-accent);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.25em;
+  }
+
+  .prose :global(li + li) {
+    margin-top: var(--space-3xs);
+  }
+
+  .prose :global(li::marker) {
+    color: var(--c-accent);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .prose :global(blockquote) {
+    padding-left: var(--space-s);
+    border-left: 1px solid var(--c-accent);
+    font-size: var(--step-1);
+    color: var(--c-text);
+  }
+
+  .prose :global(code) {
+    padding: 0.1em 0.35em;
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-s);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    color: var(--c-text);
+  }
+
+  .prose :global(img) {
+    border: 1px solid var(--c-line);
+  }
+
+  .prose :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--c-line);
+  }
+
+  /* Data tables read like a drawing's parts list. */
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--step--1);
+  }
+
+  .prose :global(th) {
+    padding: var(--space-2xs) var(--space-s) var(--space-2xs) 0;
+    border-bottom: 1px solid var(--c-line-strong);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-align: left;
+    text-transform: uppercase;
+    color: var(--c-text-faint);
+  }
+
+  .prose :global(td) {
+    padding: var(--space-2xs) var(--space-s) var(--space-2xs) 0;
+    border-bottom: 1px solid var(--c-line);
+    color: var(--c-text);
+    vertical-align: top;
+  }
+</style>
