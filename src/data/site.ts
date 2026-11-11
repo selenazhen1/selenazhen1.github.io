@@ -20,7 +20,7 @@ export const SECTIONS = {
     kicker: 'Work · CAD / CFD / FEA',
     lede: 'CAD models, CFD studies, and structural analysis — how each design was explored, tested, and refined.',
     background: 'mesh',
-    annotation: 'O-grid · 112 × 26 · NACA 6412 inv.',
+    annotation: 'O-grid · 112 × 26 · S1223 inv.',
   },
   fabrication: {
     title: 'Fabrication',

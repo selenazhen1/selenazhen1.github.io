@@ -1,9 +1,10 @@
 import { onPage, sizeCanvas } from '../lifecycle';
 import { trackPointerLight } from '../pointer-light';
+import { S1223 } from './s1223';
 
 /**
- * Design & Simulation header: an algebraic O-grid around an inverted (downforce) NACA 6412
- * airfoil — the kind of structured mesh a CFD run starts from.
+ * Design & Simulation header: an algebraic O-grid around an inverted (downforce) S1223 airfoil —
+ * the section Selena used on the beam wing flaps — in the style of a CFD mesh.
  *
  * The mesh is drawn once per resize onto two stacked canvases: a dim base layer and a bright
  * "lit" layer. CSS masks the lit layer with a radial gradient at the cursor (see pointer-light),
@@ -21,22 +22,29 @@ interface Vec {
   y: number;
 }
 
-/** NACA 4-digit surface point for parameter phi ∈ [0, 2π): upper surface TE→LE, then lower LE→TE. */
-function nacaPoint(phi: number, m = 0.06, p = 0.4, t = 0.12): Vec {
+// Split the Selig-format loop at the leading edge into two surfaces, each ordered by x.
+const LEADING_EDGE = S1223.reduce((min, [x], i) => (x < S1223[min]![0] ? i : min), 0);
+const UPPER = S1223.slice(0, LEADING_EDGE + 1).reverse();
+const LOWER = S1223.slice(LEADING_EDGE);
+
+/** Linear interpolation of y at chord position x along one surface (x ascending). */
+function surfaceY(surface: ReadonlyArray<readonly [number, number]>, x: number): number {
+  const i = Math.max(
+    1,
+    surface.findIndex(([px]) => px >= x),
+  );
+  const [x0, y0] = surface[i - 1]!;
+  const [x1, y1] = surface[i]!;
+  return x1 === x0 ? y0 : y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
+}
+
+/**
+ * Surface point for parameter phi ∈ [0, 2π): upper surface TE→LE, then lower LE→TE.
+ * Cosine spacing in x clusters grid lines at the leading and trailing edges, as a CFD mesh would.
+ */
+function surfacePoint(phi: number): Vec {
   const x = (1 + Math.cos(phi)) / 2;
-  const yt =
-    5 *
-    t *
-    (0.2969 * Math.sqrt(x) - 0.126 * x - 0.3516 * x ** 2 + 0.2843 * x ** 3 - 0.1036 * x ** 4);
-  const yc =
-    x < p
-      ? (m / p ** 2) * (2 * p * x - x ** 2)
-      : (m / (1 - p) ** 2) * (1 - 2 * p + 2 * p * x - x ** 2);
-  const slope = x < p ? ((2 * m) / p ** 2) * (p - x) : ((2 * m) / (1 - p) ** 2) * (p - x);
-  const theta = Math.atan(slope);
-  const upper = phi <= Math.PI;
-  const sign = upper ? 1 : -1;
-  return { x: x - sign * yt * Math.sin(theta), y: yc + sign * yt * Math.cos(theta) };
+  return { x, y: surfaceY(phi <= Math.PI ? UPPER : LOWER, x) };
 }
 
 /** Grid node (i around, j outward) in chord units, airfoil inverted for downforce. */
@@ -49,7 +57,7 @@ function buildGrid(): Vec[][] {
 
   return Array.from({ length: RADIAL_LINES }, (_, i) => {
     const phi = (i / RADIAL_LINES) * Math.PI * 2;
-    const surface = nacaPoint(phi);
+    const surface = surfacePoint(phi);
     const outer = { x: 0.5 + OUTER_RADIUS * Math.cos(phi), y: OUTER_RADIUS * Math.sin(phi) };
     return ringFraction.map((s) => ({
       x: surface.x + s * (outer.x - surface.x),
