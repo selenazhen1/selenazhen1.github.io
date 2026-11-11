@@ -36,6 +36,12 @@ const position = siblings.findIndex((entry) => entry.id === project.id);
 const previous = position > 0 ? siblings[position - 1] : undefined;
 const next = position < siblings.length - 1 ? siblings[position + 1] : undefined;
 
+// The cover is shown whole (never cropped); portrait covers render narrower, so request less.
+const coverIsPortrait = data.cover.height > data.cover.width;
+const coverSizes = coverIsPortrait
+  ? '(min-width: 48rem) 40rem, 92vw'
+  : '(min-width: 78rem) 74rem, 92vw';
+
 // Use the cover as the social preview image (1200 wide, JPEG for broad compatibility).
 const ogImage =
   data.cover.format === 'svg'
@@ -91,14 +97,16 @@ const ogImage =
     </div>
 
     <figure class="container cover">
-      <Image
-        src={data.cover}
-        alt={data.coverAlt}
-        widths={[640, 1024, 1440, 2000]}
-        sizes="(min-width: 78rem) 74rem, 92vw"
-        loading="eager"
-        fetchpriority="high"
-      />
+      <div class="cover-frame">
+        <Image
+          src={data.cover}
+          alt={data.coverAlt}
+          widths={[640, 1024, 1440, 2000]}
+          sizes={coverSizes}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
       <figcaption>
         <span class="label">Fig. 01</span>
         {data.coverCaption && <span class="caption">{data.coverCaption}</span>}
@@ -248,11 +256,19 @@ const ogImage =
     margin-block: var(--space-xl) var(--space-2xl);
   }
 
-  .cover img {
-    width: 100%;
-    max-height: 80svh;
-    object-fit: cover;
+  /* A viewport for the cover: the whole image, letterboxed on the deep panel if needed. */
+  .cover-frame {
+    display: flex;
+    justify-content: center;
     border: 1px solid var(--c-line);
+    background: var(--c-deep);
+  }
+
+  .cover-frame img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 80svh;
   }
 
   figcaption {

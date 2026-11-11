@@ -31,6 +31,8 @@ const projects = defineCollection({
       cover: image(),
       coverAlt: z.string(),
       coverCaption: z.string().optional(),
+      /** Focal point when a card crops the cover, as CSS object-position, e.g. "50% 35%". */
+      coverPosition: z.string().optional(),
       gallery: z
         .array(
           z.object({

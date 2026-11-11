@@ -17,8 +17,19 @@ interface Props {
 }
 
 const { project, figure, layout = 'standard', headingLevel: Heading = 'h3' } = Astro.props;
-const { title, summary, organization, dates, role, tools, status, cover, coverAlt, placeholder } =
-  project.data;
+const {
+  title,
+  summary,
+  organization,
+  dates,
+  role,
+  tools,
+  status,
+  cover,
+  coverAlt,
+  coverPosition,
+  placeholder,
+} = project.data;
 const href = projectHref(project);
 
 const sizes =
@@ -29,7 +40,13 @@ const sizes =
 
 <article class:list={['card', `card--${layout}`]}>
   <div class="media">
-    <Image src={cover} alt={coverAlt} widths={[480, 800, 1200, 1600]} sizes={sizes} />
+    <Image
+      src={cover}
+      alt={coverAlt}
+      widths={[480, 800, 1200, 1600]}
+      sizes={sizes}
+      style={coverPosition ? `object-position: ${coverPosition}` : undefined}
+    />
     <span class="label figure">Fig. {figure}</span>
     {placeholder && <span class="label placeholder-flag">Placeholder</span>}
   </div>
@@ -215,11 +232,17 @@ const sizes =
       grid-template-columns: 1.15fr 1fr;
     }
 
+    /* The text column sets the card height; the image fills whatever that is, never taller. */
     .card--wide .media {
       aspect-ratio: auto;
-      min-height: 100%;
+      min-height: 22rem;
       border-bottom: 0;
       border-right: 1px solid var(--c-line);
+    }
+
+    .card--wide .media img {
+      position: absolute;
+      inset: 0;
     }
 
     .card--wide .title-block {
