@@ -26,9 +26,9 @@
     transition:
       --nx 650ms var(--ease-out-quart),
       --ny 650ms var(--ease-out-quart);
-    /* Fade toward the text column and the page below. */
+    /* Fade under the nav, toward the text column, and into the page below. */
     mask-image:
-      linear-gradient(to bottom, #000 50%, transparent),
+      linear-gradient(to bottom, transparent, #000 22%, #000 50%, transparent),
       linear-gradient(to right, rgb(0 0 0 / 0.45), #000 55%);
     mask-composite: intersect;
   }

@@ -3,23 +3,31 @@ import { ClientRouter } from 'astro:transitions';
 import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteNav from '../components/SiteNav.astro';
+import { SITE } from '../data/site';
 import '../styles/global.css';
 
 interface Props {
   /** Page-specific title; the site name is appended automatically. */
   title?: string;
   description?: string;
-  /** Keep work-in-progress pages (e.g. the style preview) out of search engines. */
+  /** Social preview image: a site path or absolute URL. Defaults to the site card. */
+  image?: string;
+  /** Keep internal pages (e.g. the style preview) out of search engines. */
   noindex?: boolean;
 }
 
-const SITE_NAME = 'Selena Zhen — Mechanical Engineering Portfolio';
-const DEFAULT_DESCRIPTION =
-  'Portfolio of Selena Zhen, mechanical engineering student at UCLA focused on aerodynamics: CAD, CFD, and composite fabrication.';
+const {
+  title,
+  description = SITE.description,
+  image = SITE.ogImage,
+  noindex = false,
+} = Astro.props;
 
-const { title, description = DEFAULT_DESCRIPTION, noindex = false } = Astro.props;
-const fullTitle = title ? `${title} · Selena Zhen` : SITE_NAME;
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
 
 // Archivo (variable weight + width) is the display and body face. Declared here rather than via
 // the package CSS so only the Latin subset ships, and so it can be preloaded for the hero.
@@ -43,14 +51,53 @@ const archivoFace = `@font-face {
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
     <meta name="theme-color" content="#051229" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />
     <style is:inline set:html={archivoFace} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <slot name="head" />
     <ClientRouter />
   </head>
-  <body>
-    <slot />
+  <body id="top">
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <SiteNav />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
   </body>
 </html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: var(--space-xs);
+    left: var(--space-xs);
+    z-index: 100;
+    padding: 0.6em 1em;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+  }
+</style>

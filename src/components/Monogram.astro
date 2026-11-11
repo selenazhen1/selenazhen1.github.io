@@ -1,0 +1,23 @@
+---
+/** "SZ" mark — the same drawing as the favicon, without its tile. */
+interface Props {
+  size?: number;
+}
+
+const { size = 28 } = Astro.props;
+---
+
+<svg
+  class="monogram"
+  width={size}
+  height={size}
+  viewBox="8 14 48 36"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3.5"
+  stroke-linecap="square"
+  aria-hidden="true"
+>
+  <path d="M26.9 21.5A8 7 0 0 0 20 18A8 7 0 0 0 20 32A8 7 0 0 1 20 46A8 7 0 0 1 13.1 42.5"></path>
+  <path d="M36 18H52L36 46H52"></path>
+</svg>

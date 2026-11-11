@@ -1,0 +1,326 @@
+---
+import { NAV_LINKS, SITE } from '../data/site';
+import Monogram from './Monogram.astro';
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="site-nav" data-site-nav>
+  <nav class="container bar" aria-label="Primary">
+    <a class="brand" href="/" aria-label={`${SITE.name} — home`}>
+      <Monogram size={30} />
+      <span class="brand-name">{SITE.name}</span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
+      <span class="visually-hidden">Menu</span>
+      <span class="bars" aria-hidden="true"></span>
+    </button>
+
+    <div class="menu" id="site-menu">
+      <ul class="links" role="list">
+        {NAV_LINKS.map((link) => (
+          <li>
+            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a class="resume" href={SITE.resume} target="_blank" rel="noopener">
+            Resume
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M5 11 11 5M6 5h5v5"></path>
+            </svg>
+            <span class="visually-hidden"> (PDF, opens in a new tab)</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<script>
+  import { onPage } from '../scripts/lifecycle';
+
+  onPage(() => {
+    const header = document.querySelector<HTMLElement>('[data-site-nav]');
+    const toggle = header?.querySelector<HTMLButtonElement>('.menu-toggle');
+    if (!header || !toggle) return;
+
+    const setOpen = (open: boolean) => {
+      header.toggleAttribute('data-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    let frame = 0;
+    const updateScrolled = () => {
+      frame = 0;
+      header.toggleAttribute('data-scrolled', window.scrollY > 8);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(updateScrolled);
+    };
+
+    const onToggle = () => setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && header.hasAttribute('data-open')) {
+        setOpen(false);
+        toggle.focus();
+      }
+    };
+    const onMenuClick = (event: MouseEvent) => {
+      if ((event.target as Element).closest('a')) setOpen(false);
+    };
+    const desktop = window.matchMedia('(min-width: 48rem)');
+    const onBreakpoint = () => desktop.matches && setOpen(false);
+
+    updateScrolled();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    toggle.addEventListener('click', onToggle);
+    header.addEventListener('click', onMenuClick);
+    document.addEventListener('keydown', onKey);
+    desktop.addEventListener('change', onBreakpoint);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      toggle.removeEventListener('click', onToggle);
+      header.removeEventListener('click', onMenuClick);
+      document.removeEventListener('keydown', onKey);
+      desktop.removeEventListener('change', onBreakpoint);
+    };
+  });
+</script>
+
+<style>
+  .site-nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color var(--dur-base) var(--ease-out-quart),
+      border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .site-nav[data-open] {
+    background: var(--c-bg);
+  }
+
+  .site-nav[data-scrolled],
+  .site-nav[data-open] {
+    background: oklch(0.17 0.048 260 / 0.92);
+    border-bottom-color: var(--c-line);
+    backdrop-filter: blur(10px);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-height);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--c-accent);
+    text-decoration: none;
+  }
+
+  .brand-name {
+    font-size: var(--step--1);
+    font-weight: 650;
+    font-stretch: 112%;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-text);
+  }
+
+  .brand:hover .brand-name {
+    color: var(--c-accent);
+  }
+
+  .links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-l);
+    margin: 0;
+  }
+
+  .links a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding-block: 0.4rem;
+    font-size: var(--step--1);
+    font-weight: 520;
+    color: var(--c-text-muted);
+    text-decoration: none;
+  }
+
+  .links a:hover,
+  .links a[aria-current='page'] {
+    color: var(--c-text);
+  }
+
+  /* Current page: a short accent rule under the link, like a dimension tick. */
+  .links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--c-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+
+  .links a:hover::after,
+  .links a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .resume {
+    padding-inline: 0.9rem !important;
+    border: 1px solid var(--c-line-strong);
+    border-radius: var(--radius-s);
+  }
+
+  .resume::after {
+    display: none;
+  }
+
+  .resume:hover {
+    border-color: var(--c-accent);
+    color: var(--c-accent) !important;
+  }
+
+  .resume svg {
+    width: 0.9em;
+    height: 0.9em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  /* ── Mobile: disclosure menu under the bar ─────────── */
+  @media (max-width: 47.99rem) {
+    .menu-toggle {
+      display: grid;
+      place-items: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      margin-inline-end: -0.6rem;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .bars,
+    .bars::before,
+    .bars::after {
+      display: block;
+      width: 20px;
+      height: 1.5px;
+      background: var(--c-text);
+      transition:
+        transform var(--dur-base) var(--ease-out-expo),
+        opacity var(--dur-fast);
+    }
+
+    .bars {
+      position: relative;
+    }
+
+    .bars::before,
+    .bars::after {
+      content: '';
+      position: absolute;
+      left: 0;
+    }
+
+    .bars::before {
+      transform: translateY(-6px);
+    }
+
+    .bars::after {
+      transform: translateY(6px);
+    }
+
+    [data-open] .bars {
+      background: transparent;
+    }
+
+    [data-open] .bars::before {
+      transform: rotate(45deg);
+    }
+
+    [data-open] .bars::after {
+      transform: rotate(-45deg);
+    }
+
+    .menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      display: grid;
+      grid-template-rows: 0fr;
+      background: var(--c-bg);
+      border-bottom: 1px solid transparent;
+      transition:
+        grid-template-rows var(--dur-base) var(--ease-out-expo),
+        border-color var(--dur-base);
+    }
+
+    [data-open] .menu {
+      grid-template-rows: 1fr;
+      border-bottom-color: var(--c-line);
+    }
+
+    .links {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      min-height: 0;
+      overflow: hidden;
+      padding-inline: var(--gutter);
+      visibility: hidden;
+      transition: visibility 0s var(--dur-base);
+    }
+
+    [data-open] .links {
+      padding-block: var(--space-2xs) var(--space-m);
+      visibility: visible;
+      transition: visibility 0s;
+    }
+
+    .links a {
+      display: flex;
+      padding-block: var(--space-s);
+      font-size: var(--step-1);
+      border-bottom: 1px solid var(--c-line);
+    }
+
+    .links a::after {
+      display: none;
+    }
+
+    .resume {
+      justify-content: center;
+      margin-top: var(--space-s);
+      border-bottom: 1px solid var(--c-line-strong) !important;
+    }
+  }
+</style>

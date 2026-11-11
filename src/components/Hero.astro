@@ -1,4 +1,5 @@
 ---
+import { SITE } from '../data/site';
 import FlowField from './backgrounds/FlowField.astro';
 import Button from './ui/Button.astro';
 
@@ -25,9 +26,7 @@ const { primary, secondary } = Astro.props;
       <span>Selena</span>
       <span>Zhen</span>
     </h1>
-    <p class="tagline reveal">
-      Mechanical engineering student at UCLA focused on aerodynamics — from CFD to carbon fiber.
-    </p>
+    <p class="tagline reveal">{SITE.tagline}</p>
     <div class="actions reveal">
       <Button href={primary.href} icon={primary.icon}>
         {primary.label}
@@ -44,7 +43,7 @@ const { primary, secondary } = Astro.props;
     <span class="label">
       U<sub>∞</sub> &rarr;
     </span>
-    <span class="label">Los Angeles, CA</span>
+    <span class="label">{SITE.location}</span>
   </div>
 </section>
 

@@ -1,0 +1,150 @@
+---
+import { NAV_LINKS, SITE } from '../data/site';
+import Monogram from './Monogram.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container grid">
+    <div class="identity">
+      <a class="brand" href="/" aria-label={`${SITE.name} — home`}>
+        <Monogram size={34} />
+      </a>
+      <p>
+        <span class="name">{SITE.name}</span>
+        <span class="role">Mechanical Engineering · UCLA</span>
+      </p>
+    </div>
+
+    <nav aria-label="Footer">
+      <p class="label">Work</p>
+      <ul role="list">
+        {NAV_LINKS.map((link) => (
+          <li>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))}
+        <li>
+          <a href={SITE.resume} target="_blank" rel="noopener">
+            Resume<span class="visually-hidden"> (PDF, opens in a new tab)</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div>
+      <p class="label">Contact</p>
+      <ul role="list">
+        <li>
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </li>
+        <li>
+          <a href={SITE.linkedin} target="_blank" rel="noopener">
+            LinkedIn<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container base">
+    <span class="label">
+      © {year} {SITE.name}
+    </span>
+    <a class="label top" href="#top">
+      Back to top ↑
+    </a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-3xl);
+    border-top: 1px solid var(--c-line);
+    background: oklch(0.165 0.046 261 / 0.85);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.3fr;
+    gap: var(--space-l);
+    padding-block: var(--space-xl);
+  }
+
+  @media (max-width: 48rem) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .identity {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .identity {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-s);
+  }
+
+  .brand {
+    color: var(--c-accent);
+  }
+
+  .identity p {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .name {
+    font-weight: 650;
+    font-stretch: 112%;
+  }
+
+  .role {
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .label {
+    margin-block-end: var(--space-xs);
+  }
+
+  ul {
+    display: grid;
+    gap: var(--space-2xs);
+    margin: 0;
+    font-size: var(--step--1);
+  }
+
+  ul a {
+    color: var(--c-text-muted);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  ul a:hover {
+    color: var(--c-accent);
+  }
+
+  .base {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding-block: var(--space-m);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .base .label {
+    margin: 0;
+  }
+
+  .top {
+    text-decoration: none;
+  }
+
+  .top:hover {
+    color: var(--c-accent);
+  }
+</style>

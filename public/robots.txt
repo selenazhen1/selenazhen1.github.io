@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /preview/
+
+Sitemap: https://selenazhen1.github.io/sitemap-index.xml

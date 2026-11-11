@@ -1,0 +1,57 @@
+---
+import Button from '../components/ui/Button.astro';
+import DimensionLine from '../components/ui/DimensionLine.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found" noindex>
+  <section class="container not-found">
+    <p class="label code">Error 404</p>
+    <h1>Flow separated.</h1>
+    <p class="lede">This page doesn't exist — it may have moved, or the link has a typo.</p>
+    <DimensionLine label="Return to a known state" />
+    <div class="actions">
+      <Button href="/">Home</Button>
+      <Button href="/design/" variant="ghost">
+        Design &amp; Simulation
+      </Button>
+      <Button href="/fabrication/" variant="ghost">
+        Fabrication
+      </Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    gap: var(--space-m);
+    align-content: center;
+    min-height: 80svh;
+    padding-block: calc(var(--nav-height) + var(--space-xl)) var(--space-xl);
+  }
+
+  .code {
+    color: var(--c-warm);
+  }
+
+  h1 {
+    font-size: var(--step-hero);
+    font-weight: 720;
+    font-stretch: 125%;
+    line-height: 0.95;
+    letter-spacing: var(--tracking-display);
+  }
+
+  .lede {
+    max-width: 40ch;
+    font-size: var(--step-1);
+    color: var(--c-text-muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+</style>
