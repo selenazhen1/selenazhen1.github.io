@@ -1,0 +1,59 @@
+---
+/**
+ * CFD O-grid around an inverted airfoil. A dim base layer plus a bright layer revealed by a
+ * radial "light" that follows the cursor (see scripts/backgrounds/mesh.ts).
+ */
+---
+
+<div class="mesh-field" data-mesh-field aria-hidden="true">
+  <canvas data-layer="base"></canvas>
+  <canvas data-layer="lit" class="lit"></canvas>
+</div>
+
+<script>
+  import '../../scripts/backgrounds/mesh';
+</script>
+
+<style>
+  .mesh-field {
+    --light-radius: clamp(180px, 22vw, 320px);
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    transition:
+      --nx 600ms var(--ease-out-quart),
+      --ny 600ms var(--ease-out-quart);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .lit {
+    mask-image: radial-gradient(
+      circle var(--light-radius) at calc(var(--nx) * 100%) calc(var(--ny) * 100%),
+      #000 0%,
+      rgb(0 0 0 / 0.35) 45%,
+      transparent 100%
+    );
+  }
+
+  .mesh-field[data-ambient] {
+    animation: light-sweep 16s ease-in-out infinite alternate;
+  }
+
+  @keyframes light-sweep {
+    from {
+      --nx: 0.3;
+      --ny: 0.75;
+    }
+    to {
+      --nx: 0.85;
+      --ny: 0.5;
+    }
+  }
+</style>

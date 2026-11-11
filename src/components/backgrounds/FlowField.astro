@@ -1,0 +1,22 @@
+---
+/**
+ * Cursor-reactive potential-flow streamlines. Fills its nearest positioned ancestor,
+ * which also receives the pointer events (see scripts/backgrounds/flow-field.ts).
+ */
+---
+
+<canvas class="flow-field" data-flow-field aria-hidden="true"></canvas>
+
+<script>
+  import '../../scripts/backgrounds/flow-field';
+</script>
+
+<style>
+  .flow-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 98%);
+  }
+</style>

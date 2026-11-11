@@ -1,0 +1,84 @@
+---
+/**
+ * 2×2 twill carbon weave with an anisotropic sheen that follows the cursor
+ * (see scripts/backgrounds/weave.ts for how the tiles are generated).
+ */
+---
+
+<div class="weave" data-carbon-weave aria-hidden="true">
+  <div class="layer base"></div>
+  <div class="layer weft"></div>
+  <div class="layer warp"></div>
+  <div class="layer glow"></div>
+</div>
+
+<script>
+  import '../../scripts/backgrounds/weave';
+</script>
+
+<style>
+  .weave {
+    --light-radius: clamp(200px, 26vw, 380px);
+    --light-at: calc(var(--nx) * 100%) calc(var(--ny) * 100%);
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    transition:
+      --nx 650ms var(--ease-out-quart),
+      --ny 650ms var(--ease-out-quart);
+    /* Fade toward the text column and the page below. */
+    mask-image:
+      linear-gradient(to bottom, #000 50%, transparent),
+      linear-gradient(to right, rgb(0 0 0 / 0.45), #000 55%);
+    mask-composite: intersect;
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    background-size: var(--weave-size) var(--weave-size);
+  }
+
+  .base {
+    background-image: var(--weave-base);
+  }
+
+  .warp,
+  .weft {
+    mask-image: radial-gradient(circle var(--light-radius) at var(--light-at), #000, transparent);
+  }
+
+  /* Moving the light left ↔ right trades brightness between the two tow directions. */
+  .warp {
+    background-image: var(--weave-warp);
+    opacity: calc(0.12 + 0.88 * var(--nx));
+  }
+
+  .weft {
+    background-image: var(--weave-weft);
+    opacity: calc(1 - 0.88 * var(--nx));
+  }
+
+  .glow {
+    background: radial-gradient(
+      circle calc(var(--light-radius) * 1.4) at var(--light-at),
+      oklch(0.8 0.06 230 / 0.07),
+      transparent 70%
+    );
+  }
+
+  .weave[data-ambient] {
+    animation: light-sweep 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes light-sweep {
+    from {
+      --nx: 0.25;
+      --ny: 0.35;
+    }
+    to {
+      --nx: 0.9;
+      --ny: 0.6;
+    }
+  }
+</style>
