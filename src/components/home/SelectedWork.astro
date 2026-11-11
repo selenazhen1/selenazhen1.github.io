@@ -1,0 +1,36 @@
+---
+import { NAV_LINKS } from '../../data/site';
+import { getFeaturedProjects } from '../../lib/projects';
+import ProjectGrid from '../ProjectGrid.astro';
+import Button from '../ui/Button.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+const featured = await getFeaturedProjects(3);
+---
+
+{featured.length > 0 && (
+  <section class="container section" aria-labelledby="work">
+    <SectionHeading index="02" title="Selected work" id="work" />
+    <ProjectGrid projects={featured} />
+    <div class="more">
+      {NAV_LINKS.map((link) => (
+        <Button href={link.href} variant="ghost">
+          All {link.label.toLowerCase()}
+        </Button>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .section {
+    padding-block: var(--space-2xl);
+  }
+
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-l);
+  }
+</style>

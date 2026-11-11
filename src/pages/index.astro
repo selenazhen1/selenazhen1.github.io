@@ -1,9 +1,36 @@
 ---
-// Temporary home: the hero only, until the full home page is built.
 import Hero from '../components/Hero.astro';
+import About from '../components/home/About.astro';
+import Contact from '../components/home/Contact.astro';
+import Experience from '../components/home/Experience.astro';
+import SelectedWork from '../components/home/SelectedWork.astro';
+import Skills from '../components/home/Skills.astro';
+import { SITE } from '../data/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Structured data so search engines can show Selena as a person, not just a page.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  url: Astro.site?.href,
+  email: `mailto:${SITE.email}`,
+  sameAs: [SITE.linkedin],
+  jobTitle: 'Mechanical Engineering Student',
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'University of California, Los Angeles' },
+  knowsAbout: ['Aerodynamics', 'Computational fluid dynamics', 'CAD', 'Composite manufacturing'],
+};
 ---
 
 <BaseLayout>
-  <Hero primary={{ label: 'Style preview', href: '/preview/' }} />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
+  <Hero
+    primary={{ label: 'View work', href: '#work', icon: 'down' }}
+    secondary={{ label: 'Resume', href: SITE.resume, icon: 'external' }}
+  />
+  <About />
+  <SelectedWork />
+  <Experience />
+  <Skills />
+  <Contact />
 </BaseLayout>

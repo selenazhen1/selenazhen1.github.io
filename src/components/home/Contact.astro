@@ -1,0 +1,61 @@
+---
+import { SITE } from '../../data/site';
+import Button from '../ui/Button.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+---
+
+<section class="container section" aria-labelledby="contact">
+  <SectionHeading index="05" title="Contact" id="contact" />
+  <div class="contact">
+    <p class="lede">
+      Questions about a project, or want to work together? The fastest way to reach me is email.
+    </p>
+    <a class="email" href={`mailto:${SITE.email}`}>
+      {SITE.email}
+    </a>
+    <div class="actions">
+      <Button href={SITE.resume} variant="ghost" icon="down" download="Selena-Zhen-Resume.pdf">
+        Download resume
+      </Button>
+      <Button href={SITE.linkedin} variant="ghost" icon="external">
+        LinkedIn
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--space-2xl) var(--space-l);
+  }
+
+  .contact {
+    display: grid;
+    gap: var(--space-m);
+    justify-items: start;
+  }
+
+  .lede {
+    max-width: 44ch;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--c-text-muted);
+  }
+
+  .email {
+    font-size: var(--step-3);
+    font-weight: 650;
+    font-stretch: var(--stretch-display);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    overflow-wrap: anywhere;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+import { SKILLS } from '../../data/resume';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Tag from '../ui/Tag.astro';
+---
+
+<section class="container section" aria-labelledby="skills">
+  <SectionHeading index="04" title="Skills" id="skills" />
+  <dl class="groups">
+    {SKILLS.map((group) => (
+      <div class="group">
+        <dt class="label">{group.label}</dt>
+        <dd>
+          {group.items.map((item) => (
+            <Tag>{item}</Tag>
+          ))}
+        </dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--space-2xl);
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    border-top: 1px solid var(--c-line);
+    border-left: 1px solid var(--c-line);
+  }
+
+  .group {
+    display: grid;
+    align-content: start;
+    gap: var(--space-s);
+    padding: var(--space-m);
+    border-right: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  dt {
+    color: var(--c-accent);
+  }
+
+  dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+</style>
