@@ -1,0 +1,56 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
+import '../styles/global.css';
+
+interface Props {
+  /** Page-specific title; the site name is appended automatically. */
+  title?: string;
+  description?: string;
+  /** Keep work-in-progress pages (e.g. the style preview) out of search engines. */
+  noindex?: boolean;
+}
+
+const SITE_NAME = 'Selena Zhen — Mechanical Engineering Portfolio';
+const DEFAULT_DESCRIPTION =
+  'Portfolio of Selena Zhen, mechanical engineering student at UCLA focused on aerodynamics: CAD, CFD, and composite fabrication.';
+
+const { title, description = DEFAULT_DESCRIPTION, noindex = false } = Astro.props;
+const fullTitle = title ? `${title} · Selena Zhen` : SITE_NAME;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+// Archivo (variable weight + width) is the display and body face. Declared here rather than via
+// the package CSS so only the Latin subset ships, and so it can be preloaded for the hero.
+const archivoFace = `@font-face {
+  font-family: 'Archivo Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url(${archivoLatin}) format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#051229" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={archivoFace} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <ClientRouter />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

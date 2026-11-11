@@ -1,0 +1,99 @@
+/*
+ * Design tokens — the single source of truth for color, type, space, and motion.
+ * Colors are OKLCH; the site is dark-only, built on a navy base.
+ */
+
+/* Registered so they can be animated (idle light sweeps on the page headers). */
+@property --nx {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.7;
+}
+@property --ny {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.45;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* ── Color: navy surfaces ─────────────────────────────── */
+  --c-deep: oklch(0.155 0.045 262);
+  --c-bg: oklch(0.185 0.05 260);
+  --c-surface: oklch(0.22 0.055 260);
+  --c-raised: oklch(0.26 0.06 258);
+
+  /* ── Color: lines (drawing-sheet rules, borders, grid) ── */
+  --c-line: oklch(0.36 0.06 255 / 0.55);
+  --c-line-strong: oklch(0.5 0.07 250 / 0.7);
+  --c-grid: oklch(0.6 0.08 250 / 0.045);
+  --c-grid-major: oklch(0.6 0.08 250 / 0.08);
+
+  /* ── Color: text (navy-tinted, never pure white) ──────── */
+  --c-text: oklch(0.95 0.012 250);
+  --c-text-muted: oklch(0.79 0.03 250);
+  --c-text-faint: oklch(0.66 0.04 252);
+
+  /* ── Color: accents ───────────────────────────────────── */
+  --c-accent: oklch(0.84 0.09 218);
+  --c-accent-hover: oklch(0.9 0.08 215);
+  --c-accent-soft: oklch(0.84 0.09 218 / 0.12);
+  --c-on-accent: oklch(0.2 0.05 258);
+  /* Reserved for "in progress" status only. */
+  --c-warm: oklch(0.8 0.13 65);
+  --c-warm-soft: oklch(0.8 0.13 65 / 0.12);
+
+  /* ── Typography ───────────────────────────────────────── */
+  --font-sans: 'Archivo Variable', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Width axis of Archivo: wide display cuts read as motorsport / technical. */
+  --stretch-display: 118%;
+  --stretch-heading: 108%;
+
+  /* Fluid modular scale (~1.25 → ~1.333 from mobile to desktop). */
+  --step--2: clamp(0.72rem, 0.7rem + 0.08vw, 0.78rem);
+  --step--1: clamp(0.82rem, 0.8rem + 0.12vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.45vw, 1.45rem);
+  --step-2: clamp(1.5rem, 1.3rem + 0.95vw, 2.1rem);
+  --step-3: clamp(1.9rem, 1.55rem + 1.75vw, 3.1rem);
+  --step-4: clamp(2.4rem, 1.8rem + 3.2vw, 4.75rem);
+  --step-hero: clamp(3rem, 1.6rem + 7.2vw, 8.75rem);
+
+  --leading-tight: 1.02;
+  --leading-snug: 1.2;
+  --leading-body: 1.62;
+
+  --tracking-display: -0.025em;
+  --tracking-label: 0.14em;
+
+  /* ── Space (fluid) ────────────────────────────────────── */
+  --space-3xs: clamp(0.25rem, 0.23rem + 0.1vw, 0.31rem);
+  --space-2xs: clamp(0.5rem, 0.47rem + 0.15vw, 0.6rem);
+  --space-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.9rem);
+  --space-s: clamp(1rem, 0.93rem + 0.35vw, 1.2rem);
+  --space-m: clamp(1.5rem, 1.38rem + 0.55vw, 1.8rem);
+  --space-l: clamp(2rem, 1.8rem + 1vw, 2.6rem);
+  --space-xl: clamp(3rem, 2.6rem + 2vw, 4.2rem);
+  --space-2xl: clamp(4rem, 3.3rem + 3.5vw, 6.5rem);
+  --space-3xl: clamp(6rem, 4.8rem + 6vw, 10rem);
+
+  /* ── Layout ───────────────────────────────────────────── */
+  --page-max: 78rem;
+  --prose-max: 66ch;
+  --gutter: clamp(1rem, 0.4rem + 3vw, 3rem);
+  --nav-height: 4.25rem;
+
+  /* ── Shape ────────────────────────────────────────────── */
+  --radius-s: 2px;
+  --radius-m: 4px;
+
+  /* ── Motion ───────────────────────────────────────────── */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-slow: 700ms;
+}
