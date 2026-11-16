@@ -46,10 +46,10 @@ carbon fiber.
 
 During the original build, the lap belt position was misjudged and a hole was cut into the fiberglass
 shell for the belt to pass through. In the final design the lap belt didn't need to go through the
-seat at all; it needed to run over the seat through a shallow divot. I worked on reshaping the foam
-mold to form that divot and on the fiberglass layup that filled the hole, then laid up a full carbon
-fiber layer over the entire seat myself, vacuum bagged both layups, and sanded the seat to finish it
-before it was installed in the car.
+seat at all; it needed to run over the seat, over a shallow curve. I reshaped the foam mold so the
+hole would close flat and molded that curve beside it, then did the fiberglass layup that filled the
+hole. I also laid up a full carbon fiber layer over the entire seat myself, vacuum bagged both
+layups, and sanded the seat to finish it before it was installed in the car.
 
 ## The problem
 
@@ -58,23 +58,24 @@ securely, fit their body, and work with the safety harness. Because the lap belt
 misjudged when the seat was made, the shell had a hole in the wrong place.
 
 A hole the belt doesn't use leaves a weak spot in the shell, creates an edge that could catch or wear
-the belt, and makes the seat harder to finish cleanly. The lap belt needed to sit in a divot on the
-seat surface instead of passing through it.
+the belt, and makes the seat harder to finish cleanly. The lap belt needed to run over the seat
+surface instead of passing through it.
 
 ## What I did
 
 ### Reshaping the mold
 
-First we sanded down the foam mold the Driver Interface subteam had used to make the seat. Where the
-hole had been, we sanded a dip into the foam in the shape of the divot the lap belt needed. Because
-fiberglass takes the shape of the mold underneath it, the new layup would form the belt divot
-directly instead of just closing the hole flat.
+First we sanded down the foam mold the Driver Interface subteam had used to make the seat. I
+reshaped the mold where the hole had been so the new layup would close the hole flat, flush with the
+surrounding shell. Outside the hole, I molded a curve into the foam for the lap belt to run over.
+Because fiberglass takes the shape of the mold underneath it, the layup formed both directly: a flat
+patch over the old hole, and the curve for the belt.
 
 ### Fiberglass patch
 
 Using a wet layup, I wet out the fiberglass cloth with epoxy by hand and built up two to three plies
 over the hole. I cut each ply to overlap past the edges of the hole and worked it into the curved
-surface and the new divot, so the patch followed the mold and bonded to the surrounding shell. The
+surface of the seat, so the patch followed the mold and bonded to the surrounding shell. The
 hole was covered from both the outside and the inside, so the patch is supported on both faces of the
 shell rather than only covering the opening from one side.
 
@@ -98,9 +99,9 @@ again to clean up the surface and edges for the final finish.
 
 ## Results
 
-The hole is fully closed, and the patched area is now part of the seat's continuous shell, with a
-divot for the lap belt. The finished seat has a single carbon fiber layer over the whole fiberglass
-shell and was installed in the car with the lap belt routed over the seat through the divot, as
+The hole is closed flat, and the patched area is now part of the seat's continuous shell, with a
+molded curve beside it for the lap belt. The finished seat has a single carbon fiber layer over the
+whole fiberglass shell and was installed in the car with the lap belt routed over that curve, as
 intended.
 
 ## What I learned
