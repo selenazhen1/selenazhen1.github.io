@@ -40,7 +40,7 @@ const next = position < siblings.length - 1 ? siblings[position + 1] : undefined
 const coverIsPortrait = data.cover.height > data.cover.width;
 const coverSizes = coverIsPortrait
   ? '(min-width: 48rem) 40rem, 92vw'
-  : '(min-width: 78rem) 74rem, 92vw';
+  : '(min-width: 84rem) 78rem, 92vw';
 
 // Use the cover as the social preview image (1200 wide, JPEG for broad compatibility).
 const ogImage =
@@ -265,10 +265,10 @@ const ogImage =
   }
 
   .cover-frame img {
-    width: auto;
-    max-width: 100%;
+    width: 100%;
     height: auto;
     max-height: 80svh;
+    object-fit: contain;
   }
 
   figcaption {
