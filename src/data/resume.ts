@@ -38,7 +38,7 @@ export const TIMELINE: TimelineEntry[] = [
     dates: 'Sep 2025 – Present',
     location: 'Los Angeles, CA',
     summary:
-      'Owns the rear wing — concept studies in SolidWorks and STAR-CCM+, through to carbon-fiber manufacturing.',
+      'Owns the rear wing — concept studies in SolidWorks and STAR‑CCM+, through to carbon-fiber manufacturing.',
     kind: 'experience',
   },
   {
@@ -68,7 +68,7 @@ export interface SkillGroup {
 export const SKILLS: SkillGroup[] = [
   {
     label: 'CAD & Simulation',
-    items: ['SolidWorks', 'Engineering drawings', 'STAR-CCM+ (CFD)', 'SolidWorks Simulation'],
+    items: ['SolidWorks', 'Engineering drawings', 'STAR‑CCM+ (CFD)', 'SolidWorks Simulation'],
   },
   {
     label: 'Manufacturing',
