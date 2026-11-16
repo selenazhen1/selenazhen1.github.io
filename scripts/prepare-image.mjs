@@ -3,8 +3,9 @@
  * Prepare raw photos for the repo: apply EXIF orientation, strip ALL metadata (GPS, camera,
  * timestamps), cap the long edge, and write a clean JPEG/PNG with a kebab-case filename.
  *
- * PNGs stay PNG only if they actually use transparency. Opaque PNGs (CAD and CFD screenshots)
- * become high-quality JPEGs without chroma subsampling, so colored text and thin lines stay crisp.
+ * PNGs that use transparency stay PNG. Opaque PNGs are encoded both ways and the smaller file
+ * wins: screenshots with gradients (CFD plots) become high-quality JPEGs without chroma
+ * subsampling, while flat-color sketches and drawings usually stay lossless PNG.
  *
  *   npm run image -- <input...> --out <directory> [--max 2400]
  *
@@ -13,7 +14,7 @@
  * committed source files safe and reasonably sized.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, statSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, extname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -64,30 +65,46 @@ try {
 
     const image = sharp(readable).rotate(); // bake in EXIF orientation before metadata is dropped
     const { hasAlpha } = await image.metadata();
+    const isPng = ext === '.png';
     const transparent = hasAlpha && !(await sharp(readable).stats()).isOpaque;
-    const format = ext === '.png' && transparent ? 'png' : 'jpeg';
-    const fromScreenshot = ext === '.png';
-    const target = join(
-      outDir,
-      `${toKebab(basename(source, ext))}.${format === 'png' ? 'png' : 'jpg'}`,
-    );
 
-    const pipeline = image
+    const resized = image
       .resize({ width: maxEdge, height: maxEdge, fit: 'inside', withoutEnlargement: true })
       // Keep the color profile (phone photos are often Display P3) but nothing else.
       .keepIccProfile();
 
-    const info =
-      format === 'png'
-        ? await pipeline.png({ compressionLevel: 9 }).toFile(target)
-        : await pipeline
-            .flatten({ background: '#ffffff' })
-            .jpeg({
-              quality: fromScreenshot ? 92 : 88,
-              mozjpeg: true,
-              chromaSubsampling: fromScreenshot ? '4:4:4' : '4:2:0',
-            })
-            .toFile(target);
+    const encodePng = async () => ({
+      ...(await (transparent ? resized.clone() : resized.clone().removeAlpha())
+        .png({ compressionLevel: 9 })
+        .toBuffer({ resolveWithObject: true })),
+      extension: 'png',
+    });
+    const encodeJpeg = async (screenshot) => ({
+      ...(await resized
+        .clone()
+        .flatten({ background: '#ffffff' })
+        .jpeg({
+          quality: screenshot ? 92 : 88,
+          mozjpeg: true,
+          chromaSubsampling: screenshot ? '4:4:4' : '4:2:0',
+        })
+        .toBuffer({ resolveWithObject: true })),
+      extension: 'jpg',
+    });
+
+    let encoded;
+    if (isPng && transparent) {
+      encoded = await encodePng();
+    } else if (isPng) {
+      const [png, jpeg] = await Promise.all([encodePng(), encodeJpeg(true)]);
+      encoded = png.data.length <= jpeg.data.length ? png : jpeg;
+    } else {
+      encoded = await encodeJpeg(false);
+    }
+
+    const target = join(outDir, `${toKebab(basename(source, ext))}.${encoded.extension}`);
+    writeFileSync(target, encoded.data);
+    const info = encoded.info;
 
     console.log(
       `✓ ${basename(source)} → ${target.replace(`${process.cwd()}/`, '')}  ` +
