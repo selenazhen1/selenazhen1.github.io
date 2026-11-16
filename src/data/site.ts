@@ -13,6 +13,14 @@ export const SITE = {
   ogImage: '/og.png',
 } as const;
 
+/**
+ * Visitor analytics (GoatCounter — no cookies, no personal data). The dashboard is at
+ * https://<goatcounter>.goatcounter.com. Set `goatcounter` to null to turn analytics off.
+ */
+export const ANALYTICS: { goatcounter: string | null } = {
+  goatcounter: 'selenazhen',
+};
+
 /** Project sections. Each has its own index page, header copy, and interactive background. */
 export const SECTIONS = {
   design: {

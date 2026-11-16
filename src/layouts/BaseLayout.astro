@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
+import Analytics from '../components/Analytics.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteNav from '../components/SiteNav.astro';
 import { SITE } from '../data/site';
@@ -70,6 +71,7 @@ const archivoFace = `@font-face {
     <style is:inline set:html={archivoFace} />
     <slot name="head" />
     <ClientRouter />
+    <Analytics />
   </head>
   <body id="top">
     <a class="skip-link" href="#main">

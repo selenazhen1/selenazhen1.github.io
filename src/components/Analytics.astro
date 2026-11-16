@@ -1,0 +1,35 @@
+---
+/**
+ * GoatCounter analytics: privacy-friendly visitor counts with no cookies and no personal data.
+ *
+ * - Production builds only. Development never loads it, and count.js itself ignores localhost.
+ * - Pinned to a released count.js with its published integrity hash, so the browser refuses to
+ *   run it if the file ever changes (https://www.goatcounter.com/help/countjs-versions).
+ * - The site navigates client-side (Astro's ClientRouter), so automatic counting is turned off
+ *   (`no_onload`) and scripts/analytics.ts counts every page load and binds click events instead.
+ */
+import { ANALYTICS } from '../data/site';
+
+const COUNT_JS = 'https://gc.zgo.at/count.v5.js';
+const COUNT_JS_INTEGRITY =
+  'sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ';
+
+const code = ANALYTICS.goatcounter;
+const enabled = import.meta.env.PROD && code !== null;
+---
+
+{enabled && (
+  <script
+    is:inline
+    async
+    src={COUNT_JS}
+    integrity={COUNT_JS_INTEGRITY}
+    crossorigin="anonymous"
+    data-goatcounter={`https://${code}.goatcounter.com/count`}
+    data-goatcounter-settings='{"no_onload": true}'
+  />
+)}
+
+<script>
+  import '../scripts/analytics';
+</script>
