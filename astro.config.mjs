@@ -8,8 +8,8 @@ export default defineConfig({
   compressHTML: true,
   integrations: [
     sitemap({
-      // Internal pages never belong in the sitemap.
-      filter: (page) => !/\/(preview|404)\/?$/.test(new URL(page).pathname),
+      // The 404 page never belongs in the sitemap.
+      filter: (page) => !/\/404\/?$/.test(new URL(page).pathname),
     }),
   ],
 });

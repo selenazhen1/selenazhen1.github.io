@@ -1,4 +1,4 @@
 User-agent: *
-Disallow: /preview/
+Allow: /
 
 Sitemap: https://selenazhen1.github.io/sitemap-index.xml
