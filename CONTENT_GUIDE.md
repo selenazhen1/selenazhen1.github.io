@@ -1,73 +1,118 @@
 # Content guide
 
-How to hand over a new project for the site.
+How a project goes from a folder of images and notes to a page on the site.
+The three existing projects are complete examples to copy from:
 
-## 1. Make a folder per project
+| Example                                    | Shows                                                  |
+| ------------------------------------------ | ------------------------------------------------------ |
+| `src/content/projects/beam-wing-flaps/`    | CFD results as a data table, a wide CAD screenshot     |
+| `src/content/projects/driver-seat-repair/` | Phone photos, a portrait cover with a card focal point |
+| `src/content/projects/doomscroll/`         | Hand sketches, a parts table, a "Next steps" section   |
 
-Keep these folders **outside this repository** (for example in `~/Documents/portfolio-content/`).
-Raw photos are large and carry location metadata; only cleaned copies are ever committed.
+## 1. The raw folder
 
-```
-portfolio-content/
-  rear-wing-cfd/
-    01-beam-wing-cad.png
-    02-pressure-contour.png
-    image_descriptions.md
-  carbon-layup/
-    ...
-```
+Each project arrives as a folder of images plus a description file — usually inside a zip
+downloaded from Google Drive. Unzip it **outside this repository** (double-click the zip in Finder,
+or `unzip <file>.zip -d ~/Documents/portfolio-content`). Raw photos are large and can carry location
+metadata, so they never go into the repo directly.
 
-Any image format works, including iPhone HEIC.
-
-## 2. Fill in `image_descriptions.md`
+The description file follows this shape (either one-line or heading style is fine):
 
 ```
-Project: [project name here]
-Organization: [/ Dates / Role / Tools / Status (complete / in progress)]
-Summary: [summary here]
-Story: [story here: the problem → what she did → results → what she learned]
-Images:
-  [image file]: description   [state if should be cover for project]
-  [image file]: description
+PROJECT
+[Project name]
+
+ORGANIZATION
+[Organization]
+
+Dates: [Month Year – Present]
+Role: [Role]
+Tools: [Tool, Tool, …]
+Status: [Complete / In progress — optional note]
+
+SUMMARY
+[A paragraph]
+
+STORY
+The problem
+What I did
+Results
+What I learned
+
+IMAGES
+[image file name]  [COVER IMAGE]
+[Description]
+
+[image file name]
+[Description]
 ```
 
-Say which page the project belongs on: **Design & Simulation** or **Fabrication**.
-Everything written here is treated as approved for publishing.
+Selena also says which page the project belongs on: **Design & Simulation** (`design`) or
+**Fabrication** (`fabrication`). Everything in the description is approved for publishing.
 
-## 3. What happens next
+## 2. Add the project
 
-1. Images are cleaned with `npm run image -- <files> --out src/content/projects/<slug>` (metadata
-   stripped, long edge capped at 2400 px, HEIC converted).
-2. The description becomes `src/content/projects/<slug>/index.md` — frontmatter for the facts,
-   Markdown sections for the story, a captioned gallery for the images.
-3. `npm run verify` must pass, and the change is reviewed in the browser before it is pushed.
+1. **Choose a slug** — short kebab-case, e.g. `carbon-fiber-nosecone`. It becomes the folder
+   `src/content/projects/<slug>/` and the URL `/design/<slug>/` or `/fabrication/<slug>/`.
 
-## Project file reference
+2. **Clean the images** into that folder. Output file names come from the input names, so copy the
+   raw files somewhere temporary with short kebab-case names first:
+
+   ```bash
+   npm run image -- /path/to/renamed/*.{jpg,png,heic} --out src/content/projects/<slug>
+   ```
+
+   This strips all metadata, caps the long edge at 2400 px, converts HEIC, and picks the smaller of
+   PNG or JPEG for screenshots and drawings. To crop a photo, crop it before this step.
+
+3. **Write `src/content/projects/<slug>/index.md`** — the facts go in the frontmatter (reference
+   below), the story in Markdown:
+   - `## Overview` from the summary, then `## The problem`, `## What I did`, `## Results`,
+     `## What I learned`, and `## Next steps` for work in progress. Each `##` heading is numbered
+     automatically and listed in the page's contents sidebar; use `###` for sub-steps.
+   - Light edits only: keep her first-person voice and every fact and number. Fix flow, split long
+     sections, use American spelling.
+   - Put numeric results in a Markdown table (use only her numbers).
+   - `summary` (shown on cards and link previews) is a 1–2 sentence condensed version of her
+     summary. Ask her to approve it.
+   - Image captions are 1–2 sentences; the rest of a long image description belongs in the story.
+     `alt` text describes what the image shows, for screen readers.
+   - Body-text typography: STAR‑CCM+ uses a non-breaking hyphen (U+2011), and numbers join their
+     units with a non-breaking space (U+00A0).
+
+4. **Check it:** run `npm run dev`, open the new page and the page that lists it, at desktop and
+   phone width. Then run `npm run verify` — it must pass before anything is pushed.
+
+## Frontmatter reference
 
 ```markdown
 ---
-title: Rear Wing Aero Concepts
+title: Rear Wing Beam Wing Flaps
 section: design # design | fabrication
 organization: Bruin Formula Racing
-dates: Sep 2025 – Present # shown as written
-startDate: 2025-09-01 # used for ordering
+dates: Jun 2026 – Present # shown exactly as written
+startDate: 2026-06-01 # used for ordering (newest first)
 role: Responsible Engineer, Rear Wing Aerodynamics
-tools: [SolidWorks, STAR-CCM+]
+tools: [SolidWorks (CAD), Simcenter STAR-CCM+ (CFD)]
 status: in-progress # complete | in-progress
 summary: One or two sentences for cards and link previews.
-cover: ./cover.jpg
+cover: ./cfd-velocity-map.jpg
 coverAlt: What the cover image shows, for screen readers
-coverCaption: Optional caption under the cover
-gallery:
-  - src: ./pressure-contour.jpg
-    alt: Pressure contour on the main element
+coverCaption: Optional caption under the cover # optional
+coverPosition: 50% 45% # optional: focal point when a card crops the cover
+gallery: # optional; images appear in this order
+  - src: ./cad-assembly.jpg
+    alt: What this image shows
     caption: Optional caption
-    wide: true # optional: span the full width
-featured: true # optional: show on the home page
-order: 1 # optional: manual position within its page
+    wide: true # optional: span the full width (good for landscape screenshots)
+featured: true # optional: show under "Selected work" on the home page
+order: 1 # optional: position within its page (lower first)
 ---
 
 ## Overview
 
-Markdown body. Each `##` heading becomes a numbered section in the contents list.
+Markdown body…
 ```
+
+The build checks every field against `src/content.config.ts` and stops with a clear message if
+something is missing, misspelled, or points to an image that doesn't exist.
