@@ -15,12 +15,12 @@ export interface TimelineEntry {
 
 export const TIMELINE: TimelineEntry[] = [
   {
-    organization: 'UCLA ASME',
-    role: 'Doomscroll Combat Robot — Weapon & Chassis Design',
+    organization: 'ASME at UCLA',
+    role: 'Doomscroll Combat Robot — Chassis & Weapon Design',
     dates: 'Oct 2026 – Present',
     location: 'Los Angeles, CA',
     summary:
-      'Designing the rotating weapon and chassis for a 3 lb combat robot in a four-person team.',
+      'Leading the design of a 3 lb vertical-spinner combat robot in a four-person team; responsible for the chassis and weapon.',
     kind: 'experience',
   },
   {
