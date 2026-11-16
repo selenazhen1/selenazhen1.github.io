@@ -6,6 +6,7 @@ import Experience from '../components/home/Experience.astro';
 import SelectedWork from '../components/home/SelectedWork.astro';
 import Skills from '../components/home/Skills.astro';
 import { SITE } from '../data/site';
+import { trackClick } from '../lib/analytics';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 // Structured data so search engines can show Selena as a person, not just a page.
@@ -26,7 +27,12 @@ const person = {
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
   <Hero
     primary={{ label: 'View work', href: '#work', icon: 'down' }}
-    secondary={{ label: 'Resume', href: SITE.resume, icon: 'external' }}
+    secondary={{
+      label: 'Resume',
+      href: SITE.resume,
+      icon: 'external',
+      track: trackClick('resume-hero', 'Resume opened from the home page hero'),
+    }}
   />
   <About />
   <SelectedWork />

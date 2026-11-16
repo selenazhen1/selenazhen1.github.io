@@ -1,5 +1,6 @@
 ---
 import { SITE } from '../data/site';
+import type { TrackAttributes } from '../lib/analytics';
 import FlowField from './backgrounds/FlowField.astro';
 import Button from './ui/Button.astro';
 
@@ -7,6 +8,7 @@ interface Action {
   label: string;
   href: string;
   icon?: 'right' | 'down' | 'external';
+  track?: TrackAttributes;
 }
 
 interface Props {
@@ -28,11 +30,11 @@ const { primary, secondary } = Astro.props;
     </h1>
     <p class="tagline reveal">{SITE.tagline}</p>
     <div class="actions reveal">
-      <Button href={primary.href} icon={primary.icon}>
+      <Button href={primary.href} icon={primary.icon} track={primary.track}>
         {primary.label}
       </Button>
       {secondary && (
-        <Button href={secondary.href} variant="ghost" icon={secondary.icon}>
+        <Button href={secondary.href} variant="ghost" icon={secondary.icon} track={secondary.track}>
           {secondary.label}
         </Button>
       )}

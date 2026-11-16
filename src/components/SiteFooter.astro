@@ -1,5 +1,6 @@
 ---
 import { NAV_LINKS, SITE } from '../data/site';
+import { trackClick } from '../lib/analytics';
 import Monogram from './Monogram.astro';
 
 const year = new Date().getFullYear();
@@ -26,7 +27,12 @@ const year = new Date().getFullYear();
           </li>
         ))}
         <li>
-          <a href={SITE.resume} target="_blank" rel="noopener">
+          <a
+            href={SITE.resume}
+            target="_blank"
+            rel="noopener"
+            {...trackClick('resume-footer', 'Resume opened from the footer')}
+          >
             Resume<span class="visually-hidden"> (PDF, opens in a new tab)</span>
           </a>
         </li>
@@ -37,10 +43,20 @@ const year = new Date().getFullYear();
       <p class="label">Contact</p>
       <ul role="list">
         <li>
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a
+            href={`mailto:${SITE.email}`}
+            {...trackClick('email-footer', 'Email link clicked in the footer')}
+          >
+            {SITE.email}
+          </a>
         </li>
         <li>
-          <a href={SITE.linkedin} target="_blank" rel="noopener">
+          <a
+            href={SITE.linkedin}
+            target="_blank"
+            rel="noopener"
+            {...trackClick('linkedin-footer', 'LinkedIn opened from the footer')}
+          >
             LinkedIn<span class="visually-hidden"> (opens in a new tab)</span>
           </a>
         </li>

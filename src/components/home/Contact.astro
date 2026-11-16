@@ -1,5 +1,6 @@
 ---
 import { SITE } from '../../data/site';
+import { trackClick } from '../../lib/analytics';
 import Button from '../ui/Button.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 ---
@@ -10,14 +11,29 @@ import SectionHeading from '../ui/SectionHeading.astro';
     <p class="lede">
       Questions about a project, or want to work together? The fastest way to reach me is email.
     </p>
-    <a class="email" href={`mailto:${SITE.email}`}>
+    <a
+      class="email"
+      href={`mailto:${SITE.email}`}
+      {...trackClick('email-contact', 'Email link clicked in the contact section')}
+    >
       {SITE.email}
     </a>
     <div class="actions">
-      <Button href={SITE.resume} variant="ghost" icon="down" download="Selena-Zhen-Resume.pdf">
+      <Button
+        href={SITE.resume}
+        variant="ghost"
+        icon="down"
+        download="Selena-Zhen-Resume.pdf"
+        track={trackClick('resume-download', 'Resume downloaded from the contact section')}
+      >
         Download resume
       </Button>
-      <Button href={SITE.linkedin} variant="ghost" icon="external">
+      <Button
+        href={SITE.linkedin}
+        variant="ghost"
+        icon="external"
+        track={trackClick('linkedin-contact', 'LinkedIn opened from the contact section')}
+      >
         LinkedIn
       </Button>
     </div>

@@ -1,13 +1,17 @@
 ---
+import type { TrackAttributes } from '../../lib/analytics';
+
 interface Props {
   href: string;
   variant?: 'primary' | 'ghost';
   /** Arrow glyph after the label; 'external' also opens in a new tab. */
   icon?: 'right' | 'down' | 'external' | 'none';
   download?: boolean | string;
+  /** Count clicks as a GoatCounter event — build with trackClick(). */
+  track?: TrackAttributes;
 }
 
-const { href, variant = 'primary', icon = 'right', download } = Astro.props;
+const { href, variant = 'primary', icon = 'right', download, track } = Astro.props;
 const external = icon === 'external';
 ---
 
@@ -17,6 +21,7 @@ const external = icon === 'external';
   download={download}
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener' : undefined}
+  {...track}
 >
   <span>
     <slot />
