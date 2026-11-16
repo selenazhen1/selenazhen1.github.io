@@ -87,6 +87,7 @@ Only one dev server runs per project at a time — check `npm run dev:status` be
 | The resume PDF                               | Replace `public/Selena-Zhen-Resume.pdf`, keeping the same file name (use the version without a phone number) |
 | The headshot                                 | `src/assets/images/headshot.jpg` — always prepared with `npm run image`                                      |
 | Colors, fonts, spacing                       | `src/styles/tokens.css`                                                                                      |
+| Analytics account and tracked links          | `src/data/site.ts` (`ANALYTICS`), `src/lib/analytics.ts` — see [Analytics](#analytics)                       |
 
 When the resume changes, update `src/data/resume.ts` to match.
 
@@ -139,8 +140,40 @@ Pages" → **Run workflow** deploys the current `main` without a new push).
 2. Settings → Pages → Build and deployment → Source → **GitHub Actions**.
 3. Optional: Settings → General → Features → uncheck **Issues**.
 
-**After launch:** optional analytics — create a free [GoatCounter](https://www.goatcounter.com)
-account and add its script.
+## Analytics
+
+Visitor counts use [GoatCounter](https://www.goatcounter.com): no cookies, no personal data, and no
+consent banner needed. The dashboard is **https://selenazhen.goatcounter.com** (Selena's login).
+Analytics only runs on the live site — development and `localhost` are never counted.
+
+What is counted:
+
+- **Page views** — every page, including moving between pages within the site.
+- **Click events:**
+
+  | Event                                        | Meaning                                                |
+  | -------------------------------------------- | ------------------------------------------------------ |
+  | `resume-nav`, `resume-hero`, `resume-footer` | Resume opened from the nav bar, home page hero, footer |
+  | `resume-download`                            | Resume downloaded from the contact section             |
+  | `linkedin-contact`, `linkedin-footer`        | LinkedIn opened                                        |
+  | `email-contact`, `email-footer`              | Email link clicked                                     |
+
+- **Broken links** — a visit to a missing page appears as an event named `404 /the/missing/path`.
+
+Counts are a lower bound: visitors whose ad blocker blocks GoatCounter aren't counted.
+
+**Exclude your own visits:** in each browser you use, open
+`https://selenazhen1.github.io/#toggle-goatcounter` (if the site is already open, reload after
+changing the URL). A popup confirms; do it again to turn counting back on. Alternatively, in the
+GoatCounter dashboard: Settings → Tracking → ignore your IP address.
+
+**Track another link:** spread `trackClick('event-name', 'Description')` from
+`src/lib/analytics.ts` onto the link, or pass it to a `Button` as `track={…}`.
+
+**Turn it off:** set `ANALYTICS.goatcounter` to `null` in `src/data/site.ts`. The GoatCounter
+script is pinned to a released version with an integrity hash in `src/components/Analytics.astro`;
+to upgrade, copy the new URL and hash from GoatCounter's
+[versions page](https://www.goatcounter.com/help/countjs-versions).
 
 ## Project structure
 
