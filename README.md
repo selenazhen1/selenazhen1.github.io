@@ -1,8 +1,8 @@
 # Selena Zhen — Engineering Portfolio
 
 Personal engineering portfolio: CAD, CFD, and composite fabrication work.
-A static site built with [Astro](https://astro.build), to be hosted on GitHub Pages at
-`https://selenazhen1.github.io` (not launched yet — see [Launch checklist](#launch-checklist)).
+A static site built with [Astro](https://astro.build), hosted on GitHub Pages at
+`https://selenazhen1.github.io` — see [Publishing](#publishing).
 
 ## Run it on your computer
 
@@ -17,8 +17,8 @@ A static site built with [Astro](https://astro.build), to be hosted on GitHub Pa
 Install Node.js from [nodejs.org](https://nodejs.org) (choose the LTS download), or with Homebrew
 (`brew install node`). If you use `nvm`, run `nvm install` in this folder — `.nvmrc` pins the version.
 
-The repository is **private** until launch, so you need to be signed in to GitHub with an account
-that has access (the owner's account works).
+Once the repository is public, anyone can clone it. While it is private, you need to be signed in to
+GitHub with an account that has access (the owner's account works).
 
 ### 2. Download the code and install dependencies (once)
 
@@ -112,8 +112,8 @@ These apply to anyone — person or AI assistant — making changes here.
 
 - **Images:** never commit raw photos or screenshots. Keep raw content outside the repository and
   add only files produced by `npm run image`.
-- **Privacy:** the repository becomes public at launch, and so does its entire Git history. Never
-  commit anything sensitive, even temporarily — a later deletion does not remove it from history.
+- **Privacy:** the repository is public, and so is its entire Git history. Never commit anything
+  sensitive, even temporarily — a later deletion does not remove it from history.
 - **Editing Selena's write-ups:** light edits only — keep her first-person voice and every fact and
   number; fix flow and split into sections. Card summaries and image captions are 1–2 sentences;
   longer image descriptions are folded into the story. Use American spelling.
@@ -122,16 +122,25 @@ These apply to anyone — person or AI assistant — making changes here.
 - **Commits:** small and descriptive. No personal names and no attribution trailers in commit
   messages.
 
-## Launch checklist
+## Publishing
 
-Not done yet:
+The site deploys itself. Every push to `main` runs `.github/workflows/deploy.yml`, which:
 
-1. Delete the internal style reference `src/pages/preview.astro`; `npm run verify:launch` must pass.
-2. Add a GitHub Actions workflow that builds the site and deploys it to GitHub Pages.
-3. Optional analytics: create a free [GoatCounter](https://www.goatcounter.com) account and add its
-   script.
-4. In the repository's GitHub settings (owner only): make the repository **public**, then under
-   **Pages** set the source to **GitHub Actions**.
+1. runs the launch checks (`npm run verify:launch`) — if anything fails, nothing is published;
+2. builds the site;
+3. publishes it to GitHub Pages at `https://selenazhen1.github.io` (live a minute or two later).
+
+Watch a deployment, or re-run one, from the repository's **Actions** tab ("Deploy to GitHub
+Pages" → **Run workflow** deploys the current `main` without a new push).
+
+**One-time setup (repository owner only):**
+
+1. Settings → General → Danger Zone → **Change visibility** → **Public**.
+2. Settings → Pages → Build and deployment → Source → **GitHub Actions**.
+3. Optional: Settings → General → Features → uncheck **Issues**.
+
+**After launch:** optional analytics — create a free [GoatCounter](https://www.goatcounter.com)
+account and add its script.
 
 ## Project structure
 
@@ -147,19 +156,19 @@ src/
     ui/                     Small primitives (buttons, tags, status, dimension lines)
   layouts/                  Base HTML shell (fonts, meta, nav, footer, page transitions)
   lib/                      Project queries and shared types
-  pages/                    Routes: home, /design/, /fabrication/, case studies, 404, /preview/
+  pages/                    Routes: home, /design/, /fabrication/, case studies, 404
   scripts/                  Client-side TypeScript (background renderers, lifecycle helpers)
   styles/                   Design tokens and global styles
 public/                     Resume PDF, favicon, social preview image, robots.txt
 scripts/                    Node tooling: verify.mjs, prepare-image.mjs
+.github/workflows/deploy.yml  Launch checks, build, and deploy to GitHub Pages
 ```
 
 ## Design system
 
 Dark-only, navy base with an ice-blue accent (warm amber is reserved for "in progress").
 Typography is Archivo (variable width — wide cuts for display) with IBM Plex Mono for data labels.
-All tokens live in `src/styles/tokens.css`. With `npm run dev` running, open
-`http://localhost:4321/preview/` to see every token and component in one place.
+All tokens live in `src/styles/tokens.css`.
 
 Each interactive background respects `prefers-reduced-motion`, pauses when off-screen, and falls
 back to a slow ambient animation on touch devices.

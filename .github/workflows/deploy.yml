@@ -1,0 +1,74 @@
+# Builds the site and publishes it to GitHub Pages (https://selenazhen1.github.io).
+#
+# Runs on every push to main, or manually from the Actions tab ("Run workflow").
+# Nothing is published unless the launch checks pass first.
+#
+# One-time repository setup (owner): Settings → Pages → Source → "GitHub Actions".
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One deployment at a time. A newer push queues behind a deployment in progress instead of
+# cancelling it halfway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  verify:
+    name: Launch checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js (version from .nvmrc)
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install pdftotext (lets the leak scan read the resume PDF)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run launch checks (format, types, build, links, leak scan, launch readiness)
+        run: npm run verify:launch
+        env:
+          ASTRO_TELEMETRY_DISABLED: '1'
+
+  build:
+    name: Build
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Install, build, and upload the site
+        uses: withastro/action@v6
+        with:
+          node-version: 24 # keep in step with .nvmrc
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
